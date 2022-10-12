@@ -78,7 +78,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         
         i_carga = KI(1)*exp(s1*t)+KI(2)*exp(s2*t)
         /* Tensão do Capacitor */
-        VS= [v_ini+Vf ; v_deri(1)]
+        VS= [v_ini - Vf ; v_deri(1)]
         KV= K\VS
         
         disp("== K1 (Tensão) ==")
@@ -86,7 +86,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         disp("== K2 (Tensão) ==")
         disp(KV(2))
         
-        Vc_carga = Vf - (KV(1)*exp(s1*t)+KV(2)*exp(s2*t))
+        Vc_carga = Vf + (KV(1)*exp(s1*t)+KV(2)*exp(s2*t))
         Vr_carga = i_carga*R
         Vl_carga = Vc_carga-Vr_carga+Vf
         
@@ -125,7 +125,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         /* Corrente */
         
         /* Tensão */
-        VK1 = v_ini + Vf
+        VK1 = v_ini - Vf
         VK2 = v_deri(1) + VK1*alpha
         
         disp("== K1 (Tensão) ==")
@@ -133,7 +133,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         disp("== K2 (Tensão) ==")
         disp(VK2)
         
-        Vc_carga = Vf - (exp(-alpha*t).*(VK1+VK2*t))
+        Vc_carga = Vf + (exp(-alpha*t).*(VK1+VK2*t))
         /* Descarga */
         disp("\== Descarga ==/")
         VK1 = Vc_carga($)
@@ -217,11 +217,11 @@ function plot_RLC(R, L, C, Vf, T, resolution)
     plot(t+T, Vc_descarga)
 endfunction
 
-//R= 12e3
+R= 1.8e3
 C= 6.8e-6
 L= 5.6e-3
 
-R= 2*sqrt(L/C)
+//R= 2*sqrt(L/C)
 
 resolution= 1e3
 Vf= 4
