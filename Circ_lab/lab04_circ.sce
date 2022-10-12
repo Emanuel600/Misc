@@ -30,17 +30,15 @@ function plot_RLC(R, L, C, Vf, T, resolution)
     disp(omega)
     /* Carga */
     /* Analisando circuito - corrente */
-    i_ini(1) = 0        // Igual a zero => indutor resiste a mudança em t=0+
+    i_ini    = 0        // Igual a zero => indutor resiste a mudança em t=0+
     i_deri(1)= Vf/L     // Tensão do indutor igual a tensão da fonte em t=0+
     /* Analisando circuito - tensão */
-    v_ini(1) = 0
+    v_ini    = 0
     v_deri(1)= 0   // dv/dt=(i/C)=0 em t=0+
     /* Descarga */
     /* Analisando circuito - corrente */
-    i_ini(2) = 0    // Igual a zero devido ao capacitor => tensão no resistor igual a zero em t=0+
     i_deri(2)= Vf/L // Tensão do indutor igual a tensão do capacitor em t=0+
     /* Analisando circuito - tensão */
-    v_ini(2) = Vf
     v_deri(2)= 0   // dv/dt=(i/C)=0 em t=0+
     
     if alpha > omega then // Superamortecido
@@ -70,7 +68,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         /* Carga */
         disp("\== Carga ==/")
         /* Corrente do Circuito */
-        SI= [i_ini(1) ; i_deri(1)] // Corrente em regime permanente é zero
+        SI= [i_ini ; i_deri(1)] // Corrente em regime permanente é zero
         KI= K\SI
         
         disp("== K1 (Corrente) ==")
@@ -80,7 +78,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         
         i_carga = KI(1)*exp(s1*t)+KI(2)*exp(s2*t)
         /* Tensão do Capacitor */
-        VS= [v_ini(1)+Vf ; v_deri(1)]
+        VS= [v_ini+Vf ; v_deri(1)]
         KV= K\VS
         
         disp("== K1 (Tensão) ==")
@@ -95,7 +93,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         /* Descarga */
         disp("\== Descarga ==/")
         /* Corrente do Circuito */
-        SI= [i_ini(2) ; i_deri(2)] // Matriz solução
+        SI= [i_carga($) ; i_deri(2)] // Matriz solução
         KI= K\SI                  // Constantes multiplicativas(parâmetros)
         
         disp("== K1 (Corrente) ==")
@@ -105,7 +103,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         
         i_descarga = KI(1)*exp(s1*t)+KI(2)*exp(s2*t)
         /* Tensão do Capacitor */
-        VS= [v_ini(2) ; v_deri(2)] // Matriz solução
+        VS= [Vc_carga($) ; v_deri(2)] // Matriz solução
         KV= K\VS                   // Constantes multiplicativas(parâmetros)
         
         disp("== K1 (Tensão) ==")
@@ -119,7 +117,41 @@ function plot_RLC(R, L, C, Vf, T, resolution)
     end
     
     if alpha == omega then // Critacamente amortecido
-        i=(Vf/L)*exp(-alpha*t)
+        T = abs(6/alpha)
+        step = T/resolution
+        t = 0:step:T
+        /* Carga */
+        disp("\== Carga ==/")
+        /* Corrente */
+        
+        /* Tensão */
+        VK1 = v_ini + Vf
+        VK2 = v_deri(1) + VK1*alpha
+        
+        disp("== K1 (Tensão) ==")
+        disp(VK1)
+        disp("== K2 (Tensão) ==")
+        disp(VK2)
+        
+        Vc_carga = Vf - (exp(-alpha*t).*(VK1+VK2*t))
+        /* Descarga */
+        disp("\== Descarga ==/")
+        VK1 = Vc_carga($)
+        VK2 = v_deri(2)
+        
+        /* Tensão do Capacitor*/
+        VK1 = Vc_carga($)
+        VK2 = (v_deri(2)+VK1*alpha)
+        
+        disp("== K1 (Tensão) ==")
+        disp(VK1)
+        disp("== K2 (Tensão) ==")
+        disp(VK2)
+        
+        Vc_descarga = (exp(-alpha*t).*(VK1+VK2*t))
+        /* Corrente */
+        i_descraga=(Vf/L)*exp(-alpha*t)
+        /* Tensão */
     end
     
     if alpha < omega then // Subamortecido
@@ -133,7 +165,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         /* Carga */
         disp("\== Carga ==/")
         /* Corrente do Circuito*/
-        IK1 = i_ini(1)
+        IK1 = i_ini
         IK2 = (i_deri(1)+IK1*alpha)/wd
         
         disp("== K1 (Corrente) ==")
@@ -144,7 +176,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         i_carga    = exp(-alpha*t).*( IK1*cos(wd*t) + IK2*sin(wd*t) )
         
         /* Tensão do Capacitor*/
-        VK1 = v_ini(1) - Vf
+        VK1 = v_ini - Vf
         VK2 = (v_deri(1)+VK1*alpha)/wd
         
         disp("== K1 (Tensão) ==")
@@ -154,14 +186,12 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         
         Vc_carga   = Vf + exp(-alpha*t).*( VK1*cos(wd*t) + VK2*sin(wd*t) )
         
-        disp("Vc_carga inicial: ", Vc_carga(1)-Vf)
-        
         Vr_carga   = i_carga*R
         Vl_carga   = Vc_carga-Vr_carga
         /* Descarga */
         disp("\== Descarga ==/")
         /* Corrente do Circuito*/
-        IK1 = i_ini(2)
+        IK1 = i_carga($)
         IK2 = (i_deri(2)+IK1*alpha)/wd
         
         disp("== K1 (Corrente) ==")
@@ -171,7 +201,7 @@ function plot_RLC(R, L, C, Vf, T, resolution)
         
         i_descarga    = exp(-alpha*t).*( IK1*cos(wd*t) + IK2*sin(wd*t) )
         /* Tensão do Capacitor*/
-        VK1 = v_ini(2)
+        VK1 = Vc_carga($)
         VK2 = (v_deri(2)+VK1*alpha)/wd
         disp("== K1 (Tensão) ==")
         disp(VK1)
@@ -187,9 +217,11 @@ function plot_RLC(R, L, C, Vf, T, resolution)
     plot(t+T, Vc_descarga)
 endfunction
 
-R= 2e3
-C= 3e-9
-L= 10.6e-3
+//R= 12e3
+C= 6.8e-6
+L= 5.6e-3
+
+R= 2*sqrt(L/C)
 
 resolution= 1e3
 Vf= 4
