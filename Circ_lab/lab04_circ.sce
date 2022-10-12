@@ -21,7 +21,7 @@ endfunction
 function omega= calc_omega(L, C)
     omega= 1/sqrt(L*C)
 endfunction
-function plot_RLC(R, L, C, Vf, T, step)
+function plot_RLC(R, L, C, Vf, T, resolution)
     alpha= calc_alpha(R, L)
     omega= calc_omega(L, C)
     disp("== alpha ==")
@@ -43,8 +43,6 @@ function plot_RLC(R, L, C, Vf, T, step)
     v_ini(2) = Vf
     v_deri(2)= 0   // dv/dt=(i/C)=0 em t=0+
     
-    t = 0:step:T/2
-    
     if alpha > omega then // Superamortecido
         root = sqrt(alpha^2-omega^2)
         s1   = -alpha + root
@@ -54,6 +52,19 @@ function plot_RLC(R, L, C, Vf, T, step)
         disp(s1)
         disp("== s2 ==")
         disp(s2)
+        
+        /* Determinar Periodo */
+        if s1>s2 then
+            T = abs(6/s1)
+        else
+            T = abs(6/s2)
+        end
+        
+        disp("Período: ", T)
+        
+        step = T/resolution
+        
+        t = 0:step:T
         
         K = [1 1 ; s1 s2]    // Matriz de parâmetros (Válido para tensão e corrente)
         /* Carga */
@@ -112,6 +123,10 @@ function plot_RLC(R, L, C, Vf, T, step)
     end
     
     if alpha < omega then // Subamortecido
+        T = abs(6/alpha)
+        step = T/resolution
+        t = 0:step:T
+        
         wd   = sqrt(omega^2-alpha^2)
         disp("== wd ==")
         disp(wd)
@@ -169,16 +184,14 @@ function plot_RLC(R, L, C, Vf, T, step)
         Vl_descarga   = Vc_descarga-Vr_descarga
     end
     plot(t, Vc_carga)
-    plot(t+T/2, Vc_descarga)
+    plot(t+T, Vc_descarga)
 endfunction
 
-R= 2.25e3+330
-C= 1e-9
-L= 5.6e-3
-T= 50e-6
+R= 2e3
+C= 3e-9
+L= 10.6e-3
 
 resolution= 1e3
-step= T/resolution
 Vf= 4
 
 plot_RLC()
