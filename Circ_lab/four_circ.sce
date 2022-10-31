@@ -39,7 +39,7 @@ function plot_func(funcstr, x)
     plot(x, y, 'r')
 endfunction
 // Calcula e retorna parâmetros e a transformação completa da função entrada
-function [F, a, b, cc] = Fourier_transform(func, T, x, err_tol, conv_tol, min_iter, max_iter)
+function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, conv_tol, min_iter, max_iter)
     /* Argumentos de entrada:
     * func: string literal da função a ser estimada (ex: ‘cos(t)’)
     * T: Período da função a ser analisada
@@ -50,26 +50,26 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, err_tol, conv_tol, min_it
     */
     
     select argn(2) // Valores padrão
-    case 3 then
+    case 5 then
         err_tol = 1e-4
         conv_tol= 1e-3
         min_iter= 1e3
         max_iter= 50
-    case 4 then
+    case 6 then
         conv_tol= 1e-3
         min_iter= 1e3
         max_iter= 50
-    case 5 then
+    case 7 then
         min_iter= 1e3
         max_iter= 50
-    case 6 then
+    case 8 then
         max_iter= 50
     end
     
     erro = 1 // Erro da iteração atual
     erpr = 1 // Erro da iteração anterior
     
-    cc = determine_a0(func, T)
+    cc = escala*determine_a0(func, T)+offset
     F = cc
     n  = 0 // Iteração atual sendo calculada
     w0 = (2*%pi)/T // Frequência angular fundamental
@@ -167,8 +167,7 @@ x = 0:1e-2:(2*T) // "eixo" x (plano cartesiano)
 // Escalando e adicionando offset
 escala = 7.5
 offset = -5
-[F, a, b, cc] = Fourier_transform(func, T, x)
-F = escala*F + offset
+[F, a, b, cc] = Fourier_transform(func, T, x, escala, offset)
 
 /* Componentes CC (tensão e corrente) */
 icc = cc/6
