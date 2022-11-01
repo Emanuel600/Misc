@@ -71,6 +71,7 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, 
     
     cc = escala*determine_a0(func, T)+offset
     F = cc
+    printf("CC: {%g}\n", cc)
     n  = 0 // Iteração atual sendo calculada
     w0 = (2*%pi)/T // Frequência angular fundamental
     /* Calcula 'F' */
@@ -78,14 +79,14 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, 
         n = n+1
         
         [a(n), b(n)] =  determine_nvar(func, T)
-        a(n) = a(n)
-        b(n) = b(n)
+        a(n) = escala*a(n)
+        b(n) = escala*b(n)
         printf("==================================\n")
         printf("Iteração {%d}: a(%d)=%g | b(%d)=%g\n", n, n, a(n), n, b(n))
         sencos = a(n)*cos(n*w0*x) + b(n)*sin(n*w0*x)
         F = F + sencos
         
-        erro = abs( 2 - max(F) )/(2) // Analisa erro no pico da onda (forma mais sensata nesse contexto)
+        erro = abs( escala*2 - max(F) )/(escala*2) // Analisa erro no pico da onda (forma mais sensata nesse contexto)
         
         dedn = abs(erpr - erro) // Variação do erro ao longo de uma iteração
         
@@ -104,9 +105,8 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, 
     end
 endfunction
 // Calcula correntes nos elementos passivos, sem elemento CC
-function [i, il, ic] = correntes_CA(S, a, b, w0, L, C, t)
+function [i, il, ic] = correntes_CA(a, b, w0, L, C, t)
     /* Argumentos de entrada:
-    * S: Escala
     * a: Cossenos da série de Fourier
     * b: Senos da série de Fourier
     * w0: Frequência angular fundamental
@@ -118,24 +118,27 @@ function [i, il, ic] = correntes_CA(S, a, b, w0, L, C, t)
     * il: Corrente no indutor
     * ic: Corrente no capacitor
     */
-    n = 0
     i = 0
     il= 0
     ic= 0
-    
     for n = 1:max(size(a))
         /* Calcula Impedâncias */
-        ZL = %i*n*w0*L
-        ZC = -%i/(n*w0*C)
+        ZL = %i*n*w0*L + 4
+        ZC = 1/(n*w0*C*%i)
         ZCL= ZL+ZC
         Zeq= 2 + (ZL*ZC/ZCL)
         /* Calcula Correntes (Forma Fasorial) */
-        FV = S*complex(b(n), a(n))
+        FV = complex(a(n), b(n))
         Fi = FV/Zeq
         Fil= Fi*ZC/ZCL
         Fic= Fi*ZL/ZCL
         /* Converte (Fasorial -> senoidal) */
-        i = i + abs(FV)*sin(n*w0*t + atan(a(n)/b(n)))
+        [mod, phi] = polar(Fi)
+        [modl, phil] = polar(Fil)
+        [modc, phic] = polar(Fic)
+        i  = i + mod*sin(n*w0*t + phi)
+        il = il + modl*sin(n*w0*t + phil)
+        ic = ic + modc*sin(n*w0*t + phic)
     end
 endfunction
 // Calcula tensão nos elementos passivos do circuito, sem elemento CC
@@ -153,9 +156,8 @@ function [Vc, Vr1, Vr2, Vl] = tensoes_CA(fonte, i, il, ic)
     */
     Vr1 = 2*i
     Vr2 = 4*il
-    Vc  = Vr2
-    Vl  = 0
-    //Vl  = fonte - Vr1 - Vr2
+    Vc  = fonte - Vr1
+    Vl  = fonte - Vr1 - Vr2
 endfunction
 /* Plotando Resultados */
 clc // Limpa console
@@ -178,15 +180,15 @@ Vccc  = Vr2cc
 L = 1
 C = 0.1
 // Correntes
-[i, il, ic] = correntes_CA(escala, a, b, w0, L, C, x)
-i = i + offset
+[i, il, ic] = correntes_CA(a, b, w0, L, C, x)
+i = i + icc
 il= il+ icc
 // Tensões
-[Vc, Vr1, Vr2, Vl] = tensoes_CA(F*escala, i, il, ic)
+[Vc, Vr1, Vr2, Vl] = tensoes_CA(F, i, il, ic)
 Vr1 = Vr1 + Vr1cc
+Vr2 = Vr2 + Vr2cc 
 /* Plotando Resultados */
-plot(x, -i, 'r--')
-plot(x, F)
+plot(x, Vr1, 'r')
 //plot(x, Vr1)
 
 
