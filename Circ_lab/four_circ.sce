@@ -44,6 +44,8 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, 
     * func: string literal da função a ser estimada (ex: ‘cos(t)’)
     * T: Período da função a ser analisada
     * x: vetor representando o eixo ‘x’
+    * escala: 
+    * offset: 
     * err_tol: Tolerância de erro no programa (padrão = 1e-4(%))
     * conv_tol: Tolerância de convergência na série calculada (padrão = 1e-3(%))
     * min_iter: Número mínimo de iterações para checar se há convergência (padrão = 10)
@@ -86,7 +88,9 @@ function [F, a, b, cc] = Fourier_transform(func, T, x, escala, offset, err_tol, 
         sencos = a(n)*cos(n*w0*x) + b(n)*sin(n*w0*x)
         F = F + sencos
         
-        erro = abs( escala*2 - max(F) )/(escala*2) // Analisa erro no pico da onda (forma mais sensata nesse contexto)
+        max_real = escala*2 + offset
+        
+        erro = abs( max_real - max(F) )/(max_real) // Analisa erro no pico da onda (forma mais sensata nesse contexto)
         
         dedn = abs(erpr - erro) // Variação do erro ao longo de uma iteração
         
@@ -126,9 +130,9 @@ function [i, il, ic] = correntes_CA(a, b, w0, L, C, t)
         ZL = %i*n*w0*L + 4
         ZC = 1/(n*w0*C*%i)
         ZCL= ZL+ZC
-        Zeq= 2 + (ZL*ZC/ZCL)
+        Zeq= 2 + (ZC*ZL/ZCL)
         /* Calcula Correntes (Forma Fasorial) */
-        FV = complex(a(n), b(n))
+        FV = complex(b(n), a(n))
         Fi = FV/Zeq
         Fil= Fi*ZC/ZCL
         Fic= Fi*ZL/ZCL
@@ -136,7 +140,7 @@ function [i, il, ic] = correntes_CA(a, b, w0, L, C, t)
         [mod, phi] = polar(Fi)
         [modl, phil] = polar(Fil)
         [modc, phic] = polar(Fic)
-        i  = i + mod*sin(n*w0*t + phi)
+        i  = i  + mod*sin(n*w0*t + phi)
         il = il + modl*sin(n*w0*t + phil)
         ic = ic + modc*sin(n*w0*t + phic)
     end
@@ -160,7 +164,7 @@ function [Vc, Vr1, Vr2, Vl] = tensoes_CA(fonte, i, il, ic)
     Vl  = fonte - Vr1 - Vr2
 endfunction
 /* Plotando Resultados */
-clc // Limpa console
+clc ; clf // Limpa console e gráfico
 // Definindo variáveis
 T = 2 // período
 w0= (2*%pi)/T // Frequência angular fundamental
@@ -187,9 +191,10 @@ il= il+ icc
 [Vc, Vr1, Vr2, Vl] = tensoes_CA(F, i, il, ic)
 Vr1 = Vr1 + Vr1cc
 Vr2 = Vr2 + Vr2cc 
+Vc  = Vc  + Vccc
 /* Plotando Resultados */
-plot(x, Vr1, 'r')
-//plot(x, Vr1)
+plot(x, Vl, 'r')
+plot(x, il)
 
 
 
