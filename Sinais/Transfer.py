@@ -11,7 +11,12 @@
 
 """
 import Transfer_Function_Aux as TFA
+import sys
 
 print(TFA.Intro_Screen)
+
 while (not TFA.exit):
     TFA.Menu()
+
+# Indica que o programa foi devidamente finalizado
+sys.exit(0)

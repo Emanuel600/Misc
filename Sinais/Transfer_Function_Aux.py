@@ -7,11 +7,10 @@
 @brief: funções auxiliares para o arquivo "Transfer.py"
 
 """
-
-# Usada para os números complexos
-import cmath
 # Chamadas/variáveis de sistema
 import sys
+# Usada para os números complexos
+import cmath
 # Gera gráficos, processa a função de transferência e os arrays de números
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
@@ -19,6 +18,8 @@ import control as ct
 import numpy as np
 # Cores do gráfico 3D
 from matplotlib import cm
+
+
 """
 função: Menu
 
@@ -29,7 +30,7 @@ função: Menu
 
 def Menu():
     print(Menu_Str)
-    choice = input(">> ")
+    choice = input(">> ").lower()
     try:
         Menu_Options[choice]()
     except:
@@ -75,6 +76,42 @@ def Get_Transfer_Function():
 def Display_Help():
     print(Help_String)
     return
+
+
+def Set_Z_Ceil():
+    try:
+        temp = float(input(
+            "Entre com o novo limite para o eixo Z\n>> ").strip().replace(",", "."))
+    except:
+        print("Entrada inválida, retornando ao menu")
+    if (temp < 0):
+        print("Valor inválido, retornando ao menu")
+        return
+    try:
+        global Z_Ceil
+        Z_Ceil = temp
+        return
+    except:
+        print("Erro definindo novo teto")
+        return
+
+
+def Set_XY_Limit():
+    try:
+        temp = float(input(
+            "Entre com o novo limite para o plano XY\n>> ").strip().replace(",", "."))
+    except:
+        print("Entrada inválida, retornando ao menu")
+    if (temp < 0):
+        print("Valor inválido, retornando ao menu")
+        return
+    try:
+        global XY_Lim
+        XY_Lim = temp
+        return
+    except:
+        print("Erro definindo novo limite")
+        return
 
 
 """
@@ -125,13 +162,14 @@ função:             Plot_Transfer_Function_At_sigma0
 
 def Plot_Transfer_Function_At_sigma0(H_str):
     # Eixo 'x'
-    s = j * np.linspace(-10.0, 10.0, 1000)
+    x = np.linspace(-10.0, 10.0, 1000)
+    s = j*x
     # Eixo 'y'
     Hs = abs(eval(H_str))
     if (np.size(Hs) == 1):
         Hs = Hs * np.ones(np.size(s))
     # Plota H(s) x jω
-    s0ax.plot(s.imag, Hs, label="σ = 0")
+    s0ax.plot(x, Hs, label="σ = 0")
     # Adiciona labels, legenda e título
     s0ax.legend()
     s0ax.set_xlabel("jω")
@@ -153,24 +191,24 @@ função: Plot_Transfer_Function_3D
 
 def Plot_Transfer_Function_3D(H_str):
     # Eixo imaginário
-    wj = np.linspace(-3, 3, 50)
+    wj = np.linspace(-XY_Lim, XY_Lim, 17*int(XY_Lim))
     # Eixo real
-    sg = np.linspace(-3, 3, 50)
+    sg = np.linspace(-XY_Lim, XY_Lim, 17*int(XY_Lim))
     # Eixos do plano XY
     X, Y = np.meshgrid(sg, wj)
     # Eixo 'z'
     s = X + j * Y
-    Hs = abs(eval(H_str.replace('x', 's')))
+    Hs = abs(eval(H_str))
     if (np.size(Hs) == 1):
         Hs = Hs * np.ones(X.shape)
     # Remove over/underflow do gráfico nos polos
-    Z = np.minimum(5, Hs)
+    Z = np.minimum(Z_Ceil, Hs)
 
     surf = p3dax.plot_surface(X, Y, Z, cmap=cm.inferno)
     p3dax.set_xlabel("σ")
     p3dax.set_ylabel("jω")
     p3dax.set_zlabel("H(s)")
-    p3dax.set_zlim(-1, 5)
+    p3dax.set_zlim(-0.25, Z_Ceil)
     fig.colorbar(surf, shrink=0.5, aspect=5)
     p3dax.set_title("Função de Transferência 3D")
     return
@@ -199,8 +237,12 @@ def Plot_All(H_str, H):
 
 
 def Call_Plot_Zeroes_And_Poles():
-    try:
+    H_str, H = Get_Transfer_Function()
+    temp = H
+    while (temp == -1):
         H_str, H = Get_Transfer_Function()
+        temp = H
+    try:
         # Modifica figura para apenas um gráfico
         global zpax
         fig = plt.figure()
@@ -363,6 +405,12 @@ Help_String = \
     o ASCII-ANSI, como o caractere 'σ', que pode ser confundido pelo caraceter 'o',
     também é possível que o programa encontre um caractere que não consegue decifrar
     e o substitua por '�', dependendo das configurações do terminal/editor usado.
+
+        Também há um possível erro na tela inicial que depende do interpretador python
+    utilizado, pois o caractere '\\' dentro de uma string literal pode ser interpretado
+    como apenas um contra-barra ou como dois contra-barras, devido ao uso do
+    contra-barra em linguagens gerais de programação. Qual visualização será usada
+    é completamente dependente do interpretador usado para executar o código.
 """
 
 Menu_Str = \
@@ -372,6 +420,8 @@ Menu_Str = \
     Entre 'r' para visualizar H(s) para σ = 0;
     Entre 'g' para visualizar H(s) em 3D;
     Entre 's' para visualizar todos em uma mesma figura;
+    Entre 'l' para redefinir o teto do eixo z;
+    Entre 'x' para redefinir os limites do plano XY;
     Entre "exit" para sair.
 """
 
@@ -381,8 +431,14 @@ Menu_Options = {
     'z': Call_Plot_Zeroes_And_Poles,
     'r': Call_Plot_Transfer_Function_At_sigma0,
     'g': Call_Plot_Transfer_Function_3D,
-    's': Call_Plot_All
+    's': Call_Plot_All,
+    'l': Set_Z_Ceil,
+    'x': Set_XY_Limit
 }
 
 # Se deve sair ou não
 exit = False
+# Teto do eixo 'Z'
+Z_Ceil = 5.0
+# Limite do plano 'XY'
+XY_Lim = 3.0
