@@ -35,18 +35,6 @@ w0 = w0/4
 for k in ka:
     if (not k):
         continue
-    # Dente de Serra
-    # A0[k + max] = 1/k  # Dividir por np.pi depois
-    # x0 = x0 - A0[k + max]*np.sin(k*w0 * t)
-    # x2 = x2 - A0[k + max]*np.sin(-k*w0 * (t+4))
-    # # Triangular
-    # if (not (k % 2) or (k < 1)):
-    #     A1[k + max] = 0
-    #     continue
-    # # multiplicar por 8 e dividir por pi^2 depois
-    # A1[k + max] = pow(-1, (k-1)/2)/(k*k)
-    # x1 = x1 + A1[k + max]*np.sin(k*w0/2 * (t-4))
-    # x3 = x3 + A1[k + max]*np.sin(-k*w0/2 * (t))
     A = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
     x0 = x0 + A*np.exp(j*k*w*t)
     x1 = x1 + A*np.exp(j*k*w*(t - 4))
