@@ -1,17 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-max = 100
+k_lim = 100
 j = complex(0, 1)
 
 
+# Plota o sinal 6.1-3
 def Plot_et():
     w0 = np.pi
     # t vai de -T à T
     t = np.linspace(-2, 2, 10000)
     # Valor médio da função
     x = (1 - np.exp(-2))/2
-    for k in range(0, max):
+    for k in range(0, k_lim):
         if (not k):
             continue
         f = -np.arctan2(np.pi*k, 1)
@@ -26,23 +27,24 @@ def Plot_et():
     plt.show()
 
 
+# Plota o espectro do sinal 6.1-3
 def Plot_Fase_et():
     w0 = np.pi
-    ka = np.arange(-max, max, 1)
+    ka = np.arange(-k_lim, k_lim, 1)
     # t vai de -T à T
     t = np.linspace(-2, 2, 10000)
     # Valor médio da função
     x = (1 - np.exp(-2))/2
-    A = np.zeros(max*2) * complex(1, 0)
-    f = np.zeros(max*2)
+    A = np.zeros(k_lim*2) * complex(1, 0)
+    f = np.zeros(k_lim*2)
 
     for k in ka:
         if (not k):
-            A[k + max] = (1 - np.exp(-2))/2
+            A[k + k_lim] = (1 - np.exp(-2))/2
             continue
-        f[k + max] = -np.arctan2(np.pi*k, 1)
-        A[k + max] = (1-np.exp(-2))/np.sqrt(4+4*(np.pi*k)**2)
-        x = x + A[k + max]*np.cos(k*w0 * t + f[k + max])
+        f[k + k_lim] = -np.arctan2(np.pi*k, 1)
+        A[k + k_lim] = (1-np.exp(-2))/np.sqrt(4+4*(np.pi*k)**2)
+        x = x + A[k + k_lim]*np.cos(k*w0 * t + f[k + k_lim])
     fig = plt.figure()
     # Magnitude
     ax = fig.add_subplot(1, 2, 1)
@@ -59,12 +61,13 @@ def Plot_Fase_et():
     plt.show()
 
 
+# Plota o sinal 6.1-5
 def Plot_tr():
     x = 0.0
     w = np.pi/4
     t = np.linspace(-8, 8, 10000)
 
-    for k in range(-max, max):
+    for k in range(-k_lim, k_lim):
         if (not k):
             continue
         A = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
@@ -78,16 +81,17 @@ def Plot_tr():
     plt.show()
 
 
+# Plota o espectro do sinal 6.1-5
 def Plot_Fase_tr():
     w = np.pi/4
-    A = np.zeros(max + max) * complex(1, 0)
-    ka = np.arange(-max, max, 1)
+    A = np.zeros(k_lim + k_lim) * complex(1, 0)
+    ka = np.arange(-k_lim, k_lim, 1)
 
     for k in ka:
         if (not k):
-            A[k + max] = 0
+            A[k + k_lim] = 0
             continue
-        A[k + max] = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
+        A[k + k_lim] = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
     fig = plt.figure()
     # Magnitude
     ax = fig.add_subplot(1, 2, 1)
@@ -105,10 +109,10 @@ def Plot_Fase_tr():
 
 
 def Set_k():
-    global max
+    global k_lim
     try:
         print("Entre com o número de iterações")
-        max = int(input(">> "))
+        k_lim = int(input(">> "))
     except:
         print("Valor inválido")
 
@@ -126,6 +130,7 @@ def Menu():
             print("Erro ao ler entrada")
 
 
+# Variáveis Auxiliares
 Menu_Dic = {
     "et": Plot_et,
     "tr": Plot_tr,
