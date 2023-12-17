@@ -29,35 +29,37 @@ def Plot_et():
 
 # Plota o espectro do sinal 6.1-3
 def Plot_Fase_et():
-    w0 = np.pi
-    ka = np.arange(-k_lim, k_lim, 1)
-    # t vai de -T à T
-    t = np.linspace(-2, 2, 10000)
+    w0 = np.pi * np.arange(-k_lim, k_lim + 1, 1)
+    print(w0)
+    ka = np.arange(0, k_lim + 1, 1)
     # Valor médio da função
     x = (1 - np.exp(-2))/2
-    A = np.zeros(k_lim*2) * complex(1, 0)
-    f = np.zeros(k_lim*2)
+    A = np.zeros(k_lim*2 + 1) * complex(1, 0)
+    f = np.zeros(k_lim*2 + 1)
 
     for k in ka:
+        print(k)
         if (not k):
-            A[k + k_lim] = (1 - np.exp(-2))/2
+            A[k + k_lim] = x
             continue
-        f[k + k_lim] = -np.arctan2(np.pi*k, 1)
-        A[k + k_lim] = (1-np.exp(-2))/np.sqrt(4+4*(np.pi*k)**2)
-        x = x + A[k + k_lim]*np.cos(k*w0 * t + f[k + k_lim])
+        f[k_lim - k] = np.arctan2(np.pi*k, 1)
+        A[k_lim - k] = (1-np.exp(-2))/np.sqrt(4+4*(np.pi*k)**2)
+        f[k + k_lim] = -f[k_lim - k]
+        A[k + k_lim] = A[k_lim - k]
+    print(f)
     fig = plt.figure()
     # Magnitude
     ax = fig.add_subplot(1, 2, 1)
     ax.set_title("Magnitude de exp(-t)")
     ax.set_xlabel("w")
     ax.set_ylabel("|X(w)|")
-    ax.scatter(w0 * ka, A)
+    ax.scatter(w0, A)
     # Fase
     ax = fig.add_subplot(1, 2, 2)
     ax.set_title("Fase de exp(-t)")
     ax.set_xlabel("w")
     ax.set_ylabel("arg(X(w))")
-    ax.scatter(w0 * ka, f)
+    ax.scatter(w0, f)
     plt.show()
 
 
@@ -67,11 +69,15 @@ def Plot_tr():
     w = np.pi/4
     t = np.linspace(-8, 8, 10000)
 
-    for k in range(-k_lim, k_lim):
+    for k in range(0, k_lim):
         if (not k):
             continue
+        # k > 0
         A = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
         x = x + A*(np.exp(j*k*w*t) - np.exp(j*k*w*(t - 4)))
+        # k < 0
+        A = ((pow(-j, -k)*(-j*2*k*w+1)) - 1)/(w*w*k*k)
+        x = x + A*(np.exp(-j*k*w*t) - np.exp(-j*k*w*(t - 4)))
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.set_title("Sinal 1-5(a)")
@@ -83,28 +89,33 @@ def Plot_tr():
 
 # Plota o espectro do sinal 6.1-5
 def Plot_Fase_tr():
-    w = np.pi/4
-    A = np.zeros(k_lim + k_lim) * complex(1, 0)
-    ka = np.arange(-k_lim, k_lim, 1)
+    w = np.pi/4 * np.arange(-k_lim, k_lim + 1, 1)
+    A = np.zeros(2*k_lim + 1) * complex(1, 0)
+    ka = np.arange(0, k_lim + 1, 1)
 
     for k in ka:
         if (not k):
-            A[k + k_lim] = 0
+            A[k_lim] = 0
             continue
-        A[k + k_lim] = ((pow(-j, k)*(j*2*k*w+1)) - 1)/(w*w*k*k)
+        # k < 0
+        A[k_lim - k] = ((pow(-j, -k)*(j*2*-k*(np.pi/4)+1)) - 1) / \
+            ((np.pi/4)*(np.pi/4)*k*k)
+        # k > 0
+        A[k + k_lim] = ((pow(-j, k)*(j*2*k*(np.pi/4)+1)) - 1) / \
+            ((np.pi/4)*(np.pi/4)*k*k)
     fig = plt.figure()
     # Magnitude
     ax = fig.add_subplot(1, 2, 1)
     ax.set_title("Magnitude")
     ax.set_xlabel("w")
     ax.set_ylabel("mag")
-    ax.scatter(w*ka, abs(A))
+    ax.scatter(w, abs(A))
     # Fase
     ax = fig.add_subplot(1, 2, 2)
     ax.set_title("Fase")
     ax.set_xlabel("w")
     ax.set_ylabel("fase")
-    ax.scatter(w*ka, np.arctan2(A.imag, A.real))
+    ax.scatter(w, np.arctan2(A.imag, A.real))
     plt.show()
 
 
@@ -127,7 +138,7 @@ def Menu():
         if (choice == "exit"):
             stay = 0
         else:
-            print("Erro ao ler entrada")
+            print("Erro ao ler a entrada")
 
 
 # Variáveis Auxiliares
