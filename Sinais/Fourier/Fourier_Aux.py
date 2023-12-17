@@ -20,10 +20,15 @@ def Plot_et():
         x = x + 2*A*np.cos(k*w0 * t + f)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
+    # Sinal Recriado
     ax.set_title("exp(-t) com período de 2s")
     ax.set_xlabel("t(s)")
     ax.set_ylabel("sinal")
     ax.plot(t, x)
+    # Linha de valor mínimo da função original
+    ax.plot(t, np.exp(-2)*np.ones(t.size), '--')
+    # Linha de valor máximo da função original
+    ax.plot(t, (1)*np.ones(t.size), '--')
     plt.show()
 
 
@@ -77,13 +82,19 @@ def Plot_tr():
         x = x + A*(np.exp(j*k*w*t) - np.exp(j*k*w*(t - 4)))
         # k < 0
         A = ((pow(-j, -k)*(-j*2*k*w+1)) - 1)/(w*w*k*k)
-        x = x + A*(np.exp(-j*k*w*t) - np.exp(-j*k*w*(t - 4)))
+        x = x + A*np.exp(-j*k*w*t)*(1 - np.exp(j*k*w*4))
+    x = x/16
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
+    # Sinal Recriado
     ax.set_title("Sinal 1-5(a)")
     ax.set_xlabel("t(s)")
     ax.set_ylabel("sinal")
     ax.plot(t, x)
+    # Linha de valor mínimo da função original
+    ax.plot(t, (-1)*np.ones(t.size), '--')
+    # Linha de valor máximo da função original
+    ax.plot(t, (1)*np.ones(t.size), '--')
     plt.show()
 
 
