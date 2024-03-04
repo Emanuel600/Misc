@@ -31,6 +31,37 @@ class Signal:
         self.val -= s.val
         return self
 
+    def __irshift__(self, num):
+        self.n += num
+        return self
+
+    def __ilshift__(self, num):
+        self.n -= num
+        return self
+
+    def __rshift__(self, num):
+        r = self.n + num
+        return r
+
+    def __lshift__(self, num):
+        r = self.n - num
+        print(r)
+        return r
+
+    # Modified Convolution, from professor's DSP
+    def __xor__(self, s):
+        nyb = self.n[0]+s.n[0]
+        nye = self.n[len(self.val)-1] + s.n[len(s.val)-1]
+        ny = np.arange(nyb, nye+1)
+        y = np.convolve(self.val, s.val)
+        return [y, ny]
+
+    def __ixor__(self, s):
+        nyb = self.n[0]+s.n[0]
+        nye = self.n[len(self.val)-1] + s.n[len(s.val)-1]
+        self.n = np.arange(nyb, nye+1)
+        self.val = np.convolve(self.val, s.val)
+
     # Class Methods
     # Impulse signal
     def impulse(self, n, A=1):
@@ -47,13 +78,13 @@ class Signal:
         return
 
     # Sine Signal
-    def sin(self, w, A=1):
-        self.val = A*np.sin(w*self.n)
+    def sin(self, w, A=1, fi=0):
+        self.val = A*np.sin(w*self.n + fi)
         return
 
     # Cosine Signal
-    def cos(self, w, A=1):
-        self.val = A*np.cos(w*self.n)
+    def cos(self, w, A=1, fi=0):
+        self.val = A*np.cos(w*self.n + fi)
         return
 
     def add_noise(self, var, mean=0.1):
@@ -69,26 +100,26 @@ class Signal:
             print("Error setting signal")
 
     # Plot Signal
-    def plot(self):
+    def plot(self, xl='n', yl='y[n]'):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         # Titles and labels
         ax.set_title(self.title)
-        ax.set_xlabel("n")
-        ax.set_ylabel("y[n]")
+        ax.set_xlabel(xl)
+        ax.set_ylabel(yl)
         # Plot
         plt.stem(self.n, self.val)
 
 # Plot de Conveniência
 
 
-def plot(signal, title="Signal"):
+def plot(signal, title="Signal", xl='n', yl='y[n]'):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     # Titles and labels
     ax.set_title(title)
-    ax.set_xlabel("n")
-    ax.set_ylabel("y[n]")
+    ax.set_xlabel(xl)
+    ax.set_ylabel(yl)
     # Plot
     plt.stem(signal[1], signal[0])
 
