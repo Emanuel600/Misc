@@ -1,14 +1,19 @@
-# -*- coding: utf-8 -*-
 """
-Spyder Editor
+Definitions of classes and functions for Digital Signal Processing
 
-This is a temporary script file.
+Author: Emanuel S Araldi
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+"""
+@brief: Defines a signal (x[n]) and the operations to be performed on it
 
+@var: n - numpy array containing the number of the samples
+@var: val - numpy array containg the values mapped to the 'n' vector
+@var: title - title used for plotting
+"""
 class Signal:
     # Basic Methods
     def __init__(self, lower_bound, upper_bound, title=None):
@@ -20,15 +25,65 @@ class Signal:
             self.title = "Signal"
 
     def __imul__(self, s):
-        self.val = np.multiply(self.val, s.val)
+        nmin = min(self.n[0], s.n[0])
+        nmax = max(self.n[-1], s.n[-1])+1
+        n = np.arange(nmin, nmax, 1)
+        
+        y1 = np.zeros(len(n))
+        y2 = y1.copy()
+        
+        x1 = self.val.copy()
+        x2 = s.val.copy()
+        # Adapted from professor's sigadd
+        y1[np.nonzero(np.logical_and((n >= self.n[0]),
+                  (n <= self.n[-1])) == 1)] = x1
+        y2[np.nonzero(np.logical_and((n >= s.n[0]),
+                  (n <= s.n[-1])) == 1)] = x2
+        
+        self.val = np.multiply(y1, y2)
+        self.n = n
         return self
 
     def __iadd__(self, s):
-        self.val += s.val
+        # Since 'n' equals range(min, max+1), n[0] is lowest and n[-1] is highest
+        nmin = min(self.n[0], s.n[0])
+        nmax = max(self.n[-1], s.n[-1])+1
+        n = np.arange(nmin, nmax, 1)
+        
+        y1 = np.zeros(len(n))
+        y2 = y1.copy()
+        
+        x1 = self.val.copy()
+        x2 = s.val.copy()
+        # Adapted from professor's sigadd
+        y1[np.nonzero(np.logical_and((n >= self.n[0]),
+                  (n <= self.n[-1])) == 1)] = x1
+        y2[np.nonzero(np.logical_and((n >= s.n[0]),
+                  (n <= s.n[-1])) == 1)] = x2
+        
+        self.val = y1 + y2
+        self.n = n
+        
         return self
 
     def __isub__(self, s):
-        self.val -= s.val
+        nmin = min(self.n[0], s.n[0])
+        nmax = max(self.n[-1], s.n[-1])+1
+        n = np.arange(nmin, nmax, 1)
+        
+        y1 = np.zeros(len(n))
+        y2 = y1.copy()
+        
+        x1 = self.val.copy()
+        x2 = s.val.copy()
+        # Adapted from professor's sigadd
+        y1[np.nonzero(np.logical_and((n >= self.n[0]),
+                  (n <= self.n[-1])) == 1)] = x1
+        y2[np.nonzero(np.logical_and((n >= s.n[0]),
+                  (n <= s.n[-1])) == 1)] = x2
+        
+        self.val = y1 - y2
+        self.n = n
         return self
 
     def __irshift__(self, num):
@@ -87,7 +142,7 @@ class Signal:
         self.val = A*np.cos(w*self.n + fi)
         return
 
-    def add_noise(self, var, mean=0.1):
+    def add_noise(self, var = 1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
 
     def get_sig(self):

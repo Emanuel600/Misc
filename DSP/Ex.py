@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 """
-Created on Mon Feb 26 09:54:19 2024
+DSP Exercises
 
-@author: Aluno
+@author: Emanuel S Araldi
 """
 # %% Imports / Setup
 import DSP
@@ -35,12 +34,13 @@ DSP.plot(sig, "Ex 2.1.3")
 sig = DSP.stepseq(-20, -25, 15)
 sig[0] -= DSP.stepseq(10, -25, 15)[0]
 DSP.plot(sig, "Degraus para Ex 2.1.4")
-sig[0] = np.exp(0.1*sig[1]) + sig[0]
+sig[0] = np.exp(0.1*sig[1]) * sig[0]
 DSP.plot(sig, "Ex 2.1.4")
 # %% 2.1.5
 sig = DSP.cos(-200, 200, 0.49*np.pi)
 # 'sig' becomes a tuple for some reason
 sig = np.array(sig)
+sig[0] *= 5
 sig[0] += 5*DSP.cos(-200, 200, 0.51*np.pi)[0]
 DSP.plot(sig, "cos")
 
@@ -55,7 +55,28 @@ s *= s1
 s.plot()
 
 # %% 2.1.7
-s = DSP.Signal(-200, 200)
-s.add_noise(1/10, 0)
+s = DSP.Signal(0, 100)
+s.sin(0.1*np.pi, fi=np.pi/3)
+s1 = DSP.Signal(0, 100)
+s1.exp(-0.05)
+s *= s1
 s.plot()
-# %%
+# %% 2.1.8
+s = DSP.Signal(0, 100)
+s.sin(0.1*np.pi)
+s1 = DSP.Signal(0, 100)
+s1.exp(0.01)
+s *= s1
+s.plot()
+# %% Add test
+s = DSP.Signal(-150, 150, "Meu sigadd")
+s.sin(1.5)
+s1 = DSP.Signal(-200, 200)
+s1.sin(1.4)
+s += s1
+s.plot()
+# Testando com a do professor para comparar
+s = DSP.sin(-150, 150, 1.5)
+s1 = DSP.sin(-200, 200, 1.4)
+s = DSP.sigadd(s[0], s[1], s1[0], s1[1])
+DSP.plot(s, "sigadd do prof")
