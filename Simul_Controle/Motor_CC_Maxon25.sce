@@ -65,7 +65,7 @@ disp("==========")
 step_app = 12*csim('step', t, FTMF)                 // Valor aproximado
 w_app = 507.48*(1 - exp(-236*t))                    // Valor analítico
 // Plota a função de transferência em t
-plot(1e3*t, step', 'k-'
+plot(1e3*t, step', 'k-')
 plot(1e3*t, step_app, 'b--')
 plot(1e3*t, w_app, 'r-.')
 xgrid(35)
