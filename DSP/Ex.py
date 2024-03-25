@@ -74,10 +74,6 @@ s.sin(1.5)
 s1 = DSP.Signal(-200, 200)
 s1.sin(1.4)
 s += s1
-s.plot()
-# Testando com a do professor para comparar
-s = DSP.sin(-150, 150, 1.5)
-s1 = DSP.sin(-200, 200, 1.4)
-s = DSP.sigadd(s[0], s[1], s1[0], s1[1])
-DSP.plot(s, "sigadd do prof")
+S = s.fourier()
+DSP.plot(S, "Transformada de Fourier", xl='w')
 # %%

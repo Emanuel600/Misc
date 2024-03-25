@@ -6,6 +6,7 @@ Author: Emanuel S Araldi
 
 import matplotlib.pyplot as plt
 import numpy as np
+import sympy as sp
 
 """
 @brief: Takes two signals with different 'n' vectors, and equalizes 'n'
@@ -161,6 +162,18 @@ class Signal:
 
     def add_noise(self, var=1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
+
+    def fourier(self, step=1e-3):
+        i = 0
+        j = complex(0, 1)
+        w = np.arange(-np.pi, np.pi, step)
+        F = np.zeros(w.shape)
+        for fw in F:
+            for x in self.val:
+                n = self.n[i]
+                fw += x*np.exp(-j*w*n)
+
+        return [F, w]
 
     def get_sig(self):
         return self.val
