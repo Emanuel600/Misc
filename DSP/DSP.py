@@ -173,6 +173,8 @@ class Signal:
             n = self.n[0]
             for x in self.val:
                 fw += abs(x*np.exp(-j*wn*n))
+                if (n == self.n[-1]):
+                    break
                 n += 1
             F[i] = fw
             i += 1

@@ -69,7 +69,7 @@ s1.exp(0.01)
 s *= s1
 s.plot()
 # %% Add test
-s = DSP.Signal(-8, 8, "Meu sigadd")
+s = DSP.Signal(-8, 8)
 s.sin(1.5)
 s1 = DSP.Signal(-8, 8)
 s1.sin(1.4)
