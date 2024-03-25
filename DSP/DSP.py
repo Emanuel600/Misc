@@ -167,12 +167,12 @@ class Signal:
         i = 0
         j = complex(0, 1)
         w = np.arange(-np.pi, np.pi, step)
-        F = np.zeros(w.shape)
+        F = np.zeros(w.shape) * j
         for wn in w:
             fw = 0
             n = self.n[0]
             for x in self.val:
-                fw += abs(x*np.exp(-j*wn*n))
+                fw += x*np.exp(-j*wn*n)
                 if (n == self.n[-1]):
                     break
                 n += 1
@@ -213,6 +213,30 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
     ax.set_ylabel(yl)
     # Plot
     plt.stem(signal[1], signal[0])
+
+# Plot de conveniência para transformada de Fourier
+
+
+def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    # Titles and labels
+    ax.set_title(title)
+    ax.set_xlabel(xl)
+    ax.set_ylabel(yl)
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+
+    # we already handled the x-label with ax
+    ax2.set_ylabel('Fase')
+    ax2.tick_params(axis='y')
+
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    # Plot
+    ax.plot(F[1], np.abs(F[0]))
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
+    # Add legend
+    ax.legend("Magnitude")
+    ax2.legend("Phase")
 
 
 def cos(start, end, w=1):

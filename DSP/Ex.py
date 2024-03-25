@@ -69,12 +69,12 @@ s1.exp(0.01)
 s *= s1
 s.plot()
 # %% Add test
-s = DSP.Signal(-8, 8)
-s.sin(1.5)
-s1 = DSP.Signal(-8, 8)
-s1.sin(1.4)
+s = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s.cos(1)
+s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s1.cos(2)
 s += s1
 s.plot()
 S = s.fourier(step=0.1)
-DSP.plot(S, "Transformada de Fourier", xl='w', yl="|H(w)|")
+DSP.Plot_Fourier(S)
 # %%
