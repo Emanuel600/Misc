@@ -8,12 +8,51 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 """
+@brief: Takes two signals with different 'n' vectors, and equalizes 'n'
+
+@param: sig1        - First signal
+@param: sig2        - Second signal
+@ret:   sig1, sig2  - Resulting signals, with the same 'n' vector
+"""
+
+
+def equal_n(sig1, sig2):
+    try:  # Signal is a numpy array of (n, x) form
+        n1 = sig1[1]
+        x1 = sig1[0].copy()
+        n2 = sig2[1]
+        x2 = sig2[0].copy()
+    except:  # Part of class "Signal"
+        n1 = sig1.n
+        x1 = sig1.val.copy()
+        n2 = sig2.n
+        x2 = sig2.val.copy()
+    # Normalizes
+    nmin = min(n1[0], n2[0])
+    nmax = max(n1[-1], n2[-1])+1
+    n = np.arange(nmin, nmax, 1)
+
+    y1 = np.zeros(len(n))
+    y2 = y1.copy()
+
+    # Adapted from professor's sigadd
+    y1[np.nonzero(np.logical_and((n >= n1[0]),
+                                 (n <= n1[-1])) == 1)] = x1
+    y2[np.nonzero(np.logical_and((n >= n2[0]),
+                                 (n <= n2[-1])) == 1)] = x2
+
+    return [y1, y2], n
+
+
+"""
 @brief: Defines a signal (x[n]) and the operations to be performed on it
 
 @var: n - numpy array containing the number of the samples
 @var: val - numpy array containg the values mapped to the 'n' vector
 @var: title - title used for plotting
 """
+
+
 class Signal:
     # Basic Methods
     def __init__(self, lower_bound, upper_bound, title=None):
@@ -28,18 +67,18 @@ class Signal:
         nmin = min(self.n[0], s.n[0])
         nmax = max(self.n[-1], s.n[-1])+1
         n = np.arange(nmin, nmax, 1)
-        
+
         y1 = np.zeros(len(n))
         y2 = y1.copy()
-        
+
         x1 = self.val.copy()
         x2 = s.val.copy()
         # Adapted from professor's sigadd
         y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                  (n <= self.n[-1])) == 1)] = x1
+                                     (n <= self.n[-1])) == 1)] = x1
         y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                  (n <= s.n[-1])) == 1)] = x2
-        
+                                     (n <= s.n[-1])) == 1)] = x2
+
         self.val = np.multiply(y1, y2)
         self.n = n
         return self
@@ -49,39 +88,39 @@ class Signal:
         nmin = min(self.n[0], s.n[0])
         nmax = max(self.n[-1], s.n[-1])+1
         n = np.arange(nmin, nmax, 1)
-        
+
         y1 = np.zeros(len(n))
         y2 = y1.copy()
-        
+
         x1 = self.val.copy()
         x2 = s.val.copy()
         # Adapted from professor's sigadd
         y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                  (n <= self.n[-1])) == 1)] = x1
+                                     (n <= self.n[-1])) == 1)] = x1
         y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                  (n <= s.n[-1])) == 1)] = x2
-        
+                                     (n <= s.n[-1])) == 1)] = x2
+
         self.val = y1 + y2
         self.n = n
-        
+
         return self
 
     def __isub__(self, s):
         nmin = min(self.n[0], s.n[0])
         nmax = max(self.n[-1], s.n[-1])+1
         n = np.arange(nmin, nmax, 1)
-        
+
         y1 = np.zeros(len(n))
         y2 = y1.copy()
-        
+
         x1 = self.val.copy()
         x2 = s.val.copy()
         # Adapted from professor's sigadd
         y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                  (n <= self.n[-1])) == 1)] = x1
+                                     (n <= self.n[-1])) == 1)] = x1
         y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                  (n <= s.n[-1])) == 1)] = x2
-        
+                                     (n <= s.n[-1])) == 1)] = x2
+
         self.val = y1 - y2
         self.n = n
         return self
@@ -142,7 +181,7 @@ class Signal:
         self.val = A*np.cos(w*self.n + fi)
         return
 
-    def add_noise(self, var = 1, mean=0):
+    def add_noise(self, var=1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
 
     def get_sig(self):
