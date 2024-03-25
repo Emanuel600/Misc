@@ -80,3 +80,4 @@ s = DSP.sin(-150, 150, 1.5)
 s1 = DSP.sin(-200, 200, 1.4)
 s = DSP.sigadd(s[0], s[1], s1[0], s1[1])
 DSP.plot(s, "sigadd do prof")
+# %%

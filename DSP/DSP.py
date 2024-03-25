@@ -28,7 +28,7 @@ def equal_n(sig1, sig2):
         n2 = sig2.n
         x2 = sig2.val.copy()
     # Normalizes
-    nmin = min(n1[0], n2[0])
+    nmin = min(n1[0], n2[0])        # => n1 and n2 are ascending
     nmax = max(n1[-1], n2[-1])+1
     n = np.arange(nmin, nmax, 1)
 
@@ -63,63 +63,41 @@ class Signal:
         else:
             self.title = "Signal"
 
+    def __mul__(self, s):
+        [y1, y2], n = equal_n(self, s)
+        ret = Signal(n[0], n[-1])
+        ret.set_sig(np.multiply(y1, y2))
+        return ret
+
     def __imul__(self, s):
-        nmin = min(self.n[0], s.n[0])
-        nmax = max(self.n[-1], s.n[-1])+1
-        n = np.arange(nmin, nmax, 1)
-
-        y1 = np.zeros(len(n))
-        y2 = y1.copy()
-
-        x1 = self.val.copy()
-        x2 = s.val.copy()
-        # Adapted from professor's sigadd
-        y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                                     (n <= self.n[-1])) == 1)] = x1
-        y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                                     (n <= s.n[-1])) == 1)] = x2
+        [y1, y2], n = equal_n(self, s)
 
         self.val = np.multiply(y1, y2)
         self.n = n
         return self
 
+    def __add__(self, s):
+        [y1, y2], n = equal_n(self, s)
+        ret = Signal(n[0], n[-1])
+        ret.set_sig(y1 + y2)
+        return ret
+
     def __iadd__(self, s):
-        # Since 'n' equals range(min, max+1), n[0] is lowest and n[-1] is highest
-        nmin = min(self.n[0], s.n[0])
-        nmax = max(self.n[-1], s.n[-1])+1
-        n = np.arange(nmin, nmax, 1)
-
-        y1 = np.zeros(len(n))
-        y2 = y1.copy()
-
-        x1 = self.val.copy()
-        x2 = s.val.copy()
-        # Adapted from professor's sigadd
-        y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                                     (n <= self.n[-1])) == 1)] = x1
-        y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                                     (n <= s.n[-1])) == 1)] = x2
+        [y1, y2], n = equal_n(self, s)
 
         self.val = y1 + y2
         self.n = n
 
         return self
 
+    def __sub__(self, s):
+        [y1, y2], n = equal_n(self, s)
+        ret = Signal(n[0], n[-1])
+        ret.set_sig(y1 - y2)
+        return ret
+
     def __isub__(self, s):
-        nmin = min(self.n[0], s.n[0])
-        nmax = max(self.n[-1], s.n[-1])+1
-        n = np.arange(nmin, nmax, 1)
-
-        y1 = np.zeros(len(n))
-        y2 = y1.copy()
-
-        x1 = self.val.copy()
-        x2 = s.val.copy()
-        # Adapted from professor's sigadd
-        y1[np.nonzero(np.logical_and((n >= self.n[0]),
-                                     (n <= self.n[-1])) == 1)] = x1
-        y2[np.nonzero(np.logical_and((n >= s.n[0]),
-                                     (n <= s.n[-1])) == 1)] = x2
+        [y1, y2], n = equal_n(self, s)
 
         self.val = y1 - y2
         self.n = n
