@@ -233,7 +233,7 @@ def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     # Plot
     ax.plot(F[1], np.abs(F[0]))
-    ax2.plot(F[1], np.angle(F[0]), 'r--')
+    ax2.stem(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
