@@ -70,9 +70,9 @@ s *= s1
 s.plot()
 # %% Add test
 s = DSP.Signal(-int(8*np.pi), int(8*np.pi))
-s.cos(1)
+s.sin(1)
 s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
-s1.cos(2)
+s1.sin(2)
 s += s1
 s.plot()
 S = s.fourier(step=0.1)
