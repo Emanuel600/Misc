@@ -168,10 +168,14 @@ class Signal:
         j = complex(0, 1)
         w = np.arange(-np.pi, np.pi, step)
         F = np.zeros(w.shape)
-        for fw in F:
+        for wn in w:
+            fw = 0
+            n = self.n[0]
             for x in self.val:
-                n = self.n[i]
-                fw += x*np.exp(-j*w*n)
+                fw += abs(x*np.exp(-j*wn*n))
+                n += 1
+            F[i] = fw
+            i += 1
 
         return [F, w]
 
