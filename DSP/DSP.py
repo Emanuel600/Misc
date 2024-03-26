@@ -163,23 +163,24 @@ class Signal:
     def add_noise(self, var=1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
 
-    def fourier(self, step=1e-3):
+    def fourier(self, points=500):
         i = 0
         j = complex(0, 1)
-        w = np.arange(-np.pi, np.pi, step)
-        F = np.zeros(w.shape) * j
-        N = w.shape[0]
-        for wn in w:
-            fw = 0
+        k = np.arange(0, points+1)
+        F = np.zeros(len(k)) * j
+        N = len(k)
+        T = np.pi/N
+        for w in k:
+            fw = 0 * j
             n = self.n[0]
             for x in self.val:
-                fw += x*np.exp(-j*wn*n/N)
+                fw += x*np.exp(-j*T*w*n)
                 if (n == self.n[-1]):
                     break
                 n += 1
             F[i] = fw
             i += 1
-
+        w = T*k
         return [F, w]
 
     def get_sig(self):
@@ -238,6 +239,26 @@ def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
+    return
+
+# Inverse Fourier Transform
+
+
+def inv_four(F, w, n, step=1e-3):
+    i = 0
+    j = complex(0, 1)
+    w = np.arange(-np.pi, np.pi, step)
+    T = 1/(2*np.pi)
+    for W in w:
+        fw = 0 * j
+        N = n
+        for x in F:
+            fw += x*np.exp(j*T*W*N)
+            N += 1
+        F[i] = fw
+        i += 1
+    F = F/(2*np.pi)
+    return [F, w]
 
 
 def cos(start, end, w=1):

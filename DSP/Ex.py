@@ -69,12 +69,14 @@ s1.exp(0.01)
 s *= s1
 s.plot()
 # %% Add test
-s = DSP.Signal(-int(8*np.pi), int(8*np.pi))
-s.sin(np.pi/4, fi=0)
+s = DSP.Signal(0, 4)
+# Low pass filter
+x = 3 ** s.n
+s.set_sig(x)
 # s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
-# s1.cos(2)
+# s1.sin(2)
 # s += s1
 s.plot()
-S = s.fourier(step=0.1)
+S = s.fourier(points=100)
 DSP.Plot_Fourier(S)
 # %%
