@@ -241,24 +241,36 @@ def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
     ax2.legend("Phase")
     return
 
-# Inverse Fourier Transform
+
+"""
+@brief: Inverse Fourier Transform
+
+@var:   F - np array on form (X[w], w)
+@ret:   x - no array on form (x[n], n)
+"""
 
 
-def inv_four(F, w, n, step=1e-3):
-    i = 0
+def inv_four(F, points=None):
+    p = len(F[1])
+    if (points != None):
+        try:  # type(n) = int
+            p = points
+        except:  # type(n) = np array
+            p = len(points)
+
     j = complex(0, 1)
-    w = np.arange(-np.pi, np.pi, step)
-    T = 1/(2*np.pi)
-    for W in w:
-        fw = 0 * j
-        N = n
-        for x in F:
-            fw += x*np.exp(j*T*W*N)
-            N += 1
-        F[i] = fw
-        i += 1
-    F = F/(2*np.pi)
-    return [F, w]
+    x = np.zeros(p)
+    X = F[0]
+    n = 0
+
+    for XW in X:
+        x[n] += XW*np.trapz(X*np.exp(j*F[1]*n), F[1])
+        n += 1
+        if (p == n):
+            break
+
+    n = np.arange(0, p)
+    return [x/(2*np.pi*p), n]
 
 
 def cos(start, end, w=1):
