@@ -166,20 +166,13 @@ class Signal:
     def fourier(self, points=500):
         i = 0
         j = complex(0, 1)
-        w = np.linspace(0, 2*np.pi, points)
-        F = np.zeros(len(w)) * j
-        for wn in w:
-            fw = 0 * j
-            n = self.n[0]
-            for x in self.val:
-                fw += x*np.exp(-j*wn*n)
-                if (n == self.n[-1]):
-                    break
-                n += 1
-            F[i] = fw
+        W = np.linspace(0, 2*np.pi, points)
+        F = np.zeros(len(W)) * j
+        for w in W:
+            F[i] = np.sum(self.val*np.exp(-j*w*self.n))
             i += 1
 
-        return [F, w]
+        return [F, W]
 
     def get_sig(self):
         return self.val
@@ -248,27 +241,18 @@ def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
 """
 
 
-def inv_four(F, points=None):
-    p = len(F[1])
-    if (points != None):
-        try:  # type(n) = int
-            p = points
-        except:  # type(n) = np array
-            p = len(points)
-
+def inv_four(F, n0=0, nf=10):
+    i = 0
     j = complex(0, 1)
-    x = np.zeros(p)
-    X = F[0]
-    n = 0
+    X = F[0]  # => X(w)
+    N = np.arange(n0, nf+1)
+    x = np.zeros(len(N))
 
-    for XW in X:
-        x[n] += XW*np.trapz(X*np.exp(j*F[1]*n), F[1])
-        n += 1
-        if (p == n):
-            break
+    for n in N:
+        x[i] += np.trapz(X*np.exp(j*F[1]*n), F[1])
+        i += 1
 
-    n = np.arange(0, p)
-    return [x/(2*np.pi*40), n]
+    return [x/(2*np.pi), N]
 
 
 def cos(start, end, w=1):
