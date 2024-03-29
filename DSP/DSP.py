@@ -166,21 +166,19 @@ class Signal:
     def fourier(self, points=500):
         i = 0
         j = complex(0, 1)
-        k = np.arange(0, points+1)
-        F = np.zeros(len(k)) * j
-        N = len(k)
-        T = np.pi/N
-        for w in k:
+        w = np.linspace(0, 2*np.pi, points)
+        F = np.zeros(len(w)) * j
+        for wn in w:
             fw = 0 * j
             n = self.n[0]
             for x in self.val:
-                fw += x*np.exp(-j*T*w*n)
+                fw += x*np.exp(-j*wn*n)
                 if (n == self.n[-1]):
                     break
                 n += 1
             F[i] = fw
             i += 1
-        w = T*k
+
         return [F, w]
 
     def get_sig(self):
@@ -270,7 +268,7 @@ def inv_four(F, points=None):
             break
 
     n = np.arange(0, p)
-    return [x/(2*np.pi*p), n]
+    return [x/(2*np.pi*40), n]
 
 
 def cos(start, end, w=1):
