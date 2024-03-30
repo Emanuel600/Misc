@@ -69,16 +69,15 @@ s1.exp(0.01)
 s *= s1
 s.plot()
 # %% Add test
-s = DSP.Signal(0, 8)
-# Low pass filter
-x = 3 ** s.n
-s.set_sig(x)
-# s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
-# s1.sin(2)
-# s += s1
+s1 = DSP.Signal(-int(20*np.pi), int(20*np.pi))
+s1.sin(0.1)
+s2 = DSP.Signal(-int(20*np.pi), int(20*np.pi))
+s2.sin(0.2)
+s = DSP.Signal(-int(20*np.pi), int(20*np.pi))
+s = s1 + s2
 s.plot()
-S = s.fourier(points=500)
+S = s.fourier()
 DSP.Plot_Fourier(S)
-s = DSP.inv_four(S, 0, 8)
+s = DSP.inv_four(S)
 DSP.plot(s, title="Transformada Inversa")
 # %%

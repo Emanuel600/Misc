@@ -172,7 +172,7 @@ class Signal:
             F[i] = np.sum(self.val*np.exp(-j*w*self.n))
             i += 1
 
-        return [F, W]
+        return [F, W, self.n]
 
     def get_sig(self):
         return self.val
@@ -245,7 +245,10 @@ def inv_four(F, n0=0, nf=10):
     i = 0
     j = complex(0, 1)
     X = F[0]  # => X(w)
-    N = np.arange(n0, nf+1)
+    try:
+        N = F[2]
+    except:
+        N = np.arange(n0, nf+1)
     x = np.zeros(len(N))
 
     for n in N:
