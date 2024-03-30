@@ -236,8 +236,10 @@ def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
 """
 @brief: Inverse Fourier Transform
 
-@var:   F - np array on form (X[w], w)
+@var:   F - np array on form (X[w], w, n)
 @ret:   x - no array on form (x[n], n)
+
+@obs:   The params n0 and nf are fail-safes
 """
 
 
