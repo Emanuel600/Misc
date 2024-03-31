@@ -163,14 +163,19 @@ class Signal:
     def add_noise(self, var=1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
 
-    def fourier(self, points=500):
+    def fourier(self, points=500, half=False):
         i = 0
         j = complex(0, 1)
-        W = np.linspace(0, 2*np.pi, points)
+        if (not half):
+            W = np.linspace(0, 2*np.pi, points)
+        else:
+            W = np.linspace(0, np.pi, points)
         F = np.zeros(len(W)) * j
         for w in W:
             F[i] = np.sum(self.val*np.exp(-j*w*self.n))
             i += 1
+        if (half):
+            F = 2*F
 
         return [F, W, self.n]
 
@@ -210,26 +215,86 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
 # Plot de conveniência para transformada de Fourier
 
 
-def Plot_Fourier(F, title="Transformada de Fourier", xl='w', yl='H(w)'):
+def Plot_Fourier(F, type="Same",
+                 title="Transformada de Fourier",
+                 y1='|H(w)|', y2='Phase'):
     fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
-    # Titles and labels
-    ax.set_title(title)
-    ax.set_xlabel(xl)
-    ax.set_ylabel(yl)
-    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    if (type == "Same"):
+        ax = fig.add_subplot(1, 1, 1)
+        # Titles and labels
+        ax.set_title(title)
+        ax.set_xlabel('w')
+        ax.set_ylabel(y1)
+        ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 
-    # we already handled the x-label with ax
-    ax2.set_ylabel('Fase')
-    ax2.tick_params(axis='y')
+        # we already handled the x-label with ax
+        ax2.set_ylabel(y2)
+        ax2.tick_params(axis='y')
 
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    # Plot
-    ax.plot(F[1], np.abs(F[0]))
-    ax2.stem(F[1], np.angle(F[0]), 'r--')
-    # Add legend
-    ax.legend("Magnitude")
-    ax2.legend("Phase")
+        fig.tight_layout()  # otherwise the right y-label is slightly clipped
+        # Plot
+        ax.plot(F[1], np.abs(F[0]))
+        ax2.stem(F[1], np.angle(F[0]), 'r--')
+        # Add legend
+        ax.legend("Magnitude")
+        ax2.legend("Phase")
+
+    elif (type == "Separate_Sub"):
+        ax1 = fig.add_subplot(2, 1, 1)
+        ax2 = fig.add_subplot(2, 1, 2)
+        # Titles and labels
+        plt.title(title)
+        ax1.set_xlabel('w')
+        ax1.set_ylabel(y1)
+
+        ax2.set_xlabel('w')
+        ax2.set_ylabel(y2)
+
+        fig.tight_layout()  # otherwise the right y-label is slightly clipped
+        # Plot
+        ax1.plot(F[1], np.abs(F[0]))
+        ax2.stem(F[1], np.angle(F[0]), 'r--')
+        # Add legend
+        ax1.legend("Magnitude")
+        ax2.legend("Phase")
+
+    elif (type == "Separate"):
+        # First plot
+        fig.tight_layout()
+        ax1 = fig.add_subplot(1, 1, 1)
+        # Titles and labels
+        ax1.set_xlabel('w')
+        ax1.set_ylabel(y1)
+        ax1.plot(F[1], np.abs(F[0]))
+        ax1.legend("Magnitude")
+        plt.title(title)
+        # Second plot
+        fig.tight_layout()
+        fig = plt.figure()
+        ax2 = fig.add_subplot(1, 1, 1)
+        # Titles and labels
+        plt.title(title)
+
+        ax2.set_xlabel('w')
+        ax2.set_ylabel(y2)
+        # Plot
+        ax2.stem(F[1], np.angle(F[0]), 'r--')
+        # Add legend
+        ax2.legend("Phase")
+
+    elif (type == "Mag_Only"):
+        # First plot
+        fig.tight_layout()
+        ax1 = fig.add_subplot(1, 1, 1)
+        # Titles and labels
+        ax1.set_xlabel('w')
+        ax1.set_ylabel(y1)
+        ax1.plot(F[1], np.abs(F[0]))
+        ax1.legend("Magnitude")
+        plt.title(title)
+
+    else:
+        print("Wrong type \""+type+"\"")
     return
 
 

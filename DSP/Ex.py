@@ -70,14 +70,14 @@ s *= s1
 s.plot()
 # %% Add test
 s1 = DSP.Signal(-int(20*np.pi), int(20*np.pi))
-s1.sin(0.1)
+s1.sin(0.5)
 s2 = DSP.Signal(-int(20*np.pi), int(20*np.pi))
-s2.sin(0.2)
+s2.cos(0.3)
 s = DSP.Signal(-int(20*np.pi), int(20*np.pi))
 s = s1 + s2
 s.plot()
 S = s.fourier()
-DSP.Plot_Fourier(S)
+DSP.Plot_Fourier(S, "Separate")
 s = DSP.inv_four(S)
 DSP.plot(s, title="Transformada Inversa")
 # %%
