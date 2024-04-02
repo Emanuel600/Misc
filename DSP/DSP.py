@@ -255,9 +255,10 @@ class Signal:
             i += 1
         return s
 
-    def lpf(self, wc, order=2):
+    def filter(self, wc, order=2, type="lowpass"):
         filtered = Signal(self.n[0], self.n[-1])
-        sos = sp.signal.butter(order, wc/(np.pi), output='sos')
+        sos = sp.signal.butter(N=order, Wn=wc/(np.pi),
+                               btype=type, output='sos')
         filtered.val = sp.signal.sosfilt(sos, self.val)
 
         return filtered
