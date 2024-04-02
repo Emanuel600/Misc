@@ -6,7 +6,7 @@ Author: Emanuel S Araldi
 
 import matplotlib.pyplot as plt
 import numpy as np
-import sympy as sp
+import scipy as sp
 
 """
 @brief: Takes two signals with different 'n' vectors, and equalizes 'n'
@@ -43,6 +43,85 @@ def equal_n(sig1, sig2):
                                  (n <= n2[-1])) == 1)] = x2
 
     return [y1, y2], n
+
+
+def Four_Plot_Same(F, title="Transformada de Fourier",
+                   y1='|H(w)|', y2='Phase'):
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    # Titles and labels
+    ax.set_title(title)
+    ax.set_xlabel('w')
+    ax.set_ylabel(y1)
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    # we already handled the x-label with ax
+    ax2.set_ylabel(y2)
+    ax2.tick_params(axis='y')
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    # Plot
+    ax.plot(F[1], np.abs(F[0]))
+    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    # Add legend
+    ax.legend("Magnitude")
+    ax2.legend("Phase")
+    return
+
+
+def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
+                      y1='|H(w)|', y2='Phase'):
+    fig = plt.figure()
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
+    # Titles and labels
+    plt.title(title)
+    ax1.set_xlabel('w')
+    ax1.set_ylabel(y1)
+    ax2.set_xlabel('w')
+    ax2.set_ylabel(y2)
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    # Plot
+    ax1.plot(F[1], np.abs(F[0]))
+    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    # Add legend
+    ax1.legend("Magnitude")
+    ax2.legend("Phase")
+    return
+
+
+def Four_Plot_Sep(F, title="Transformada de Fourier",
+                  y1='|H(w)|', y2='Phase'):
+    fig = plt.figure()
+    # First plot
+    Four_Plot_Mag(F, title, y1)
+    # Second plot
+    fig.tight_layout()
+    fig = plt.figure()
+    ax2 = fig.add_subplot(1, 1, 1)
+    # Titles and labels
+    plt.title(title)
+
+    ax2.set_xlabel('w')
+    ax2.set_ylabel(y2)
+    # Plot
+    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    # Add legend
+    ax2.legend("Phase")
+    return
+
+
+def Four_Plot_Mag(F, title="Transformada de Fourier",
+                  y1='|H(w)|', y2=None):
+    fig = plt.figure()
+    # First plot
+    fig.tight_layout()
+    ax1 = fig.add_subplot(1, 1, 1)
+    # Titles and labels
+    ax1.set_xlabel('w')
+    ax1.set_ylabel(y1)
+    ax1.plot(F[1], np.abs(F[0]))
+    ax1.legend("Magnitude")
+    plt.title(title)
+    return
 
 
 """
@@ -152,16 +231,40 @@ class Signal:
 
     # Sine Signal
     def sin(self, w, A=1, fi=0):
+        fi = fi*np.pi/180  # Degree -> rad
         self.val = A*np.sin(w*self.n + fi)
         return
 
     # Cosine Signal
     def cos(self, w, A=1, fi=0):
+        fi = fi*np.pi/180  # Degree -> rad
         self.val = A*np.cos(w*self.n + fi)
         return
 
+    def heaviside(self, n0=0, A=1):
+        self.val = A*np.heaviside(self.n - n0, 1)
+        return
+
+    def moving_avg(self, samples=2):
+        final_size = len(self.n)-samples+1
+        s = Signal(self.n[0], final_size + self.n[0] - 1)
+        i = 0
+        while i < final_size:
+            window = self.val[i: i+samples]
+            s.val[i] = np.sum(window)/samples
+            i += 1
+        return s
+
+    def lpf(self, wc, order=2):
+        filtered = Signal(self.n[0], self.n[-1])
+        sos = sp.signal.butter(order, wc/(np.pi), output='sos')
+        filtered.val = sp.signal.sosfilt(sos, self.val)
+
+        return filtered
+
     def add_noise(self, var=1, mean=0):
         self.val += np.random.normal(mean, var/100, self.val.shape)
+        return
 
     def fourier(self, points=500, half=False):
         i = 0
@@ -189,15 +292,19 @@ class Signal:
             print("Error setting signal")
 
     # Plot Signal
-    def plot(self, xl='n', yl='y[n]'):
+    def plot(self, xl='n', yl='y[n]', title=None):
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         # Titles and labels
-        ax.set_title(self.title)
+        if (title == None):
+            ax.set_title(self.title)
+        else:
+            ax.set_title(title)
         ax.set_xlabel(xl)
         ax.set_ylabel(yl)
         # Plot
         plt.stem(self.n, self.val)
+        return
 
 # Plot de Conveniência
 
@@ -215,86 +322,11 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
 # Plot de conveniência para transformada de Fourier
 
 
-def Plot_Fourier(F, type="Same",
+def Plot_Fourier(F, type="Mag_Only",
                  title="Transformada de Fourier",
                  y1='|H(w)|', y2='Phase'):
-    fig = plt.figure()
-    if (type == "Same"):
-        ax = fig.add_subplot(1, 1, 1)
-        # Titles and labels
-        ax.set_title(title)
-        ax.set_xlabel('w')
-        ax.set_ylabel(y1)
-        ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 
-        # we already handled the x-label with ax
-        ax2.set_ylabel(y2)
-        ax2.tick_params(axis='y')
-
-        fig.tight_layout()  # otherwise the right y-label is slightly clipped
-        # Plot
-        ax.plot(F[1], np.abs(F[0]))
-        ax2.stem(F[1], np.angle(F[0]), 'r--')
-        # Add legend
-        ax.legend("Magnitude")
-        ax2.legend("Phase")
-
-    elif (type == "Separate_Sub"):
-        ax1 = fig.add_subplot(2, 1, 1)
-        ax2 = fig.add_subplot(2, 1, 2)
-        # Titles and labels
-        plt.title(title)
-        ax1.set_xlabel('w')
-        ax1.set_ylabel(y1)
-
-        ax2.set_xlabel('w')
-        ax2.set_ylabel(y2)
-
-        fig.tight_layout()  # otherwise the right y-label is slightly clipped
-        # Plot
-        ax1.plot(F[1], np.abs(F[0]))
-        ax2.stem(F[1], np.angle(F[0]), 'r--')
-        # Add legend
-        ax1.legend("Magnitude")
-        ax2.legend("Phase")
-
-    elif (type == "Separate"):
-        # First plot
-        fig.tight_layout()
-        ax1 = fig.add_subplot(1, 1, 1)
-        # Titles and labels
-        ax1.set_xlabel('w')
-        ax1.set_ylabel(y1)
-        ax1.plot(F[1], np.abs(F[0]))
-        ax1.legend("Magnitude")
-        plt.title(title)
-        # Second plot
-        fig.tight_layout()
-        fig = plt.figure()
-        ax2 = fig.add_subplot(1, 1, 1)
-        # Titles and labels
-        plt.title(title)
-
-        ax2.set_xlabel('w')
-        ax2.set_ylabel(y2)
-        # Plot
-        ax2.stem(F[1], np.angle(F[0]), 'r--')
-        # Add legend
-        ax2.legend("Phase")
-
-    elif (type == "Mag_Only"):
-        # First plot
-        fig.tight_layout()
-        ax1 = fig.add_subplot(1, 1, 1)
-        # Titles and labels
-        ax1.set_xlabel('w')
-        ax1.set_ylabel(y1)
-        ax1.plot(F[1], np.abs(F[0]))
-        ax1.legend("Magnitude")
-        plt.title(title)
-
-    else:
-        print("Wrong type \""+type+"\"")
+    Four_Plot_Funcs[type](F, title, y1, y2)
     return
 
 
@@ -302,13 +334,13 @@ def Plot_Fourier(F, type="Same",
 @brief: Inverse Fourier Transform
 
 @var:   F - np array on form (X[w], w, n)
-@ret:   x - no array on form (x[n], n)
+@ret:   s - Signal reconstructed from F
 
 @obs:   The params n0 and nf are fail-safes
 """
 
 
-def inv_four(F, n0=0, nf=10):
+def inv_four(F, n0=-10, nf=10):
     i = 0
     j = complex(0, 1)
     X = F[0]  # => X(w)
@@ -316,13 +348,17 @@ def inv_four(F, n0=0, nf=10):
         N = F[2]
     except:
         N = np.arange(n0, nf+1)
+    s = Signal(0, 0)
+    s.n = N
     x = np.zeros(len(N))
 
     for n in N:
         x[i] += np.trapz(X*np.exp(j*F[1]*n), F[1])
         i += 1
 
-    return [x/(2*np.pi), N]
+    s.val = x/(2*np.pi)
+
+    return s
 
 
 def cos(start, end, w=1):
@@ -448,3 +484,12 @@ def conv_m(x, nx, h, nh):
     return [y, ny]
 
 # Adicionais por mim
+
+
+# Function Dictionary For Fourier Plotting
+Four_Plot_Funcs = {
+    "Same": Four_Plot_Same,
+    "Separate_Sub": Four_Plot_Sep_Sub,
+    "Separate": Four_Plot_Sep,
+    "Mag_Only": Four_Plot_Mag
+}
