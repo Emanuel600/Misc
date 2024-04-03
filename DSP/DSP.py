@@ -60,7 +60,7 @@ def Four_Plot_Same(F, title="Transformada de Fourier",
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     # Plot
     ax.plot(F[1], np.abs(F[0]))
-    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
@@ -78,10 +78,9 @@ def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
     ax1.set_ylabel(y1)
     ax2.set_xlabel('w')
     ax2.set_ylabel(y2)
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
     # Plot
     ax1.plot(F[1], np.abs(F[0]))
-    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax1.legend("Magnitude")
     ax2.legend("Phase")
@@ -94,7 +93,6 @@ def Four_Plot_Sep(F, title="Transformada de Fourier",
     # First plot
     Four_Plot_Mag(F, title, y1)
     # Second plot
-    fig.tight_layout()
     fig = plt.figure()
     ax2 = fig.add_subplot(1, 1, 1)
     # Titles and labels
@@ -103,7 +101,7 @@ def Four_Plot_Sep(F, title="Transformada de Fourier",
     ax2.set_xlabel('w')
     ax2.set_ylabel(y2)
     # Plot
-    ax2.stem(F[1], np.angle(F[0]), 'r--')
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax2.legend("Phase")
     return
@@ -113,7 +111,6 @@ def Four_Plot_Mag(F, title="Transformada de Fourier",
                   y1='|H(w)|', y2=None):
     fig = plt.figure()
     # First plot
-    fig.tight_layout()
     ax1 = fig.add_subplot(1, 1, 1)
     # Titles and labels
     ax1.set_xlabel('w')
@@ -221,25 +218,33 @@ class Signal:
         if (not temp[0].size):
             print("Invalid 'n'")
             return
-        self.val[temp] += A
-        return
+        ret = Signal(0, 0)
+        ret.n = self.n
+        ret.val[temp] += A
+        return ret
 
     # Exponential Signal
     def exp(self, k, A=1, off=0):
-        self.val = A*np.exp(k*(self.n - off))
-        return
+        ret = Signal(0, 0)
+        ret.n = self.n
+        ret.val = A*np.exp(k*(ret.n - off))
+        return ret
 
     # Sine Signal
     def sin(self, w, A=1, fi=0):
         fi = fi*np.pi/180  # Degree -> rad
-        self.val = A*np.sin(w*self.n + fi)
-        return
+        ret = Signal(0, 0)
+        ret.n = self.n
+        ret.val = A*np.sin(w*ret.n + fi)
+        return ret
 
     # Cosine Signal
     def cos(self, w, A=1, fi=0):
+        ret = Signal(0, 0)
+        ret.n = self.n
         fi = fi*np.pi/180  # Degree -> rad
-        self.val = A*np.cos(w*self.n + fi)
-        return
+        ret.val = A*np.cos(w*ret.n + fi)
+        return ret
 
     def heaviside(self, n0=0, A=1):
         self.val = A*np.heaviside(self.n - n0, 1)
@@ -354,7 +359,8 @@ def inv_four(F, n0=-10, nf=10):
     x = np.zeros(len(N))
 
     for n in N:
-        x[i] += np.trapz(X*np.exp(j*F[1]*n), F[1])
+        # np.real prevents cast warning
+        x[i] += np.real(np.trapz(X*np.exp(j*F[1]*n), F[1]))
         i += 1
 
     s.val = x/(2*np.pi)
