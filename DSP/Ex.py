@@ -76,6 +76,12 @@ s.set_sig(x)
 # s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
 # s1.sin(2)
 # s += s1
+# %% Test 2
+s = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s.sin(1)
+s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s1.sin(2)
+s += s1
 s.plot()
 S = s.fourier(points=500)
 DSP.Plot_Fourier(S)
