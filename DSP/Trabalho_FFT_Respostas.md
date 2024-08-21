@@ -29,7 +29,7 @@ heaviside (u(t)) para "janelar" as senóides originais
 
 ## d
 
-O esplhamento vêm da interferência do espectro de $F_1$, devido a sua proximidade
+O espalhamento vêm da interferência do espectro de $F_1$, devido a sua proximidade
 
 ## e
 
@@ -39,5 +39,4 @@ o efeito do janelamento
 ## f
 
 É extremamente difícil separar as duas frequências, mas é possível ver um
-segundo "pico" logo ao lado de f=500 Hz, mas este é quase indistinguível
-do efeito de janelamento que foi observado nos casos anteriores
+segundo "pico" logo ao lado de f=500 Hz, mas este é muito menor do que observado nos casos anteriores, provavelmente devido a se encontrar fora de uma das faixas de frequência que estão no gráfico
