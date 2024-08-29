@@ -495,6 +495,84 @@ def conv_m(x, nx, h, nh):
 
 # Adicionais
 
+
+def print_Hz(b, a):
+    num = "       "
+    equ = "H(z) = "
+    den = "       "
+    i = 0
+    for bi in b:
+        if i == 0:
+            num = num + str(round(bi, 3))
+        else:
+            num = num + " + " + str(round(bi, 3)) + "z^-" + str(i)
+        equ = equ + "------------"
+        i = i+1
+    i = 0
+
+    for ai in a:
+        if i == 0:
+            den = den + str(round(ai, 3))
+        else:
+            den = den + " + " + str(round(ai, 3)) + "z^-" + str(i)
+        i = i+1
+
+    print(num)
+    print(equ)
+    print(den)
+    return
+
+
+def print_diff_eq(b, a):
+    num = "       "
+    equ = "H(z) = "
+    den = "       "
+    i = 0
+    for bi in b:
+        if i == 0:
+            num = str(round(bi, 3)) + "*x[n]"
+        else:
+            num = num + " + " + str(round(bi, 3)) + "*x[n-" + str(i) + "]"
+        i = i+1
+
+    i = 0
+    for ai in a:
+        if i == 0:
+            den = str(round(ai, 3)) + "*y[n]"
+        else:
+            den = den + " + " + str(round(ai, 3)) + "*y[n-" + str(i) + "]"
+        i = i+1
+
+    print(den, " = ", num)
+    return
+
+
+def print_Hz_diff_eq(b, a, Separate=False):
+    separator = ""
+    if Separate:
+        separator = "----" + "-----------"*(len(b)-1)
+        print(separator)
+    print_Hz(b, a)
+    print(separator)
+    print_diff_eq(b, a)
+    print(separator)
+    return
+
+
+def get_FFT(y, T=1, N=None):
+    if not N:
+        N = len(y)
+    N = len(y)
+    H = (2.0/N) * (sp.fft.fft(y)[0:N//2])
+    w = sp.fft.fftfreq(N, T)[:N//2]
+    F = [H, w]
+    return F
+
+
+def plot_FFT(y, type="Mag_Only", T=1, title=None, y1=None, y2=None):
+    F = get_FFT(y, T)
+    Plot_Fourier(F, type, title, y1, y2)
+
 #
 # Copyright (c) 2011 Christopher Felton
 #
