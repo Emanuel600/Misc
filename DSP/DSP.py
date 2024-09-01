@@ -49,12 +49,12 @@ def equal_n(sig1, sig2):
 
 
 def Four_Plot_Same(F, title="Transformada de Fourier",
-                   y1='|H(w)|', y2='Phase'):
+                   y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     # Titles and labels
     ax.set_title(title)
-    ax.set_xlabel('w')
+    ax.set_xlabel('ω')
     ax.set_ylabel(y1)
     ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     # we already handled the x-label with ax
@@ -71,15 +71,15 @@ def Four_Plot_Same(F, title="Transformada de Fourier",
 
 
 def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
-                      y1='|H(w)|', y2='Phase'):
+                      y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax1 = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
     # Titles and labels
     plt.title(title)
-    ax1.set_xlabel('w')
+    ax1.set_xlabel('ω')
     ax1.set_ylabel(y1)
-    ax2.set_xlabel('w')
+    ax2.set_xlabel('ω')
     ax2.set_ylabel(y2)
     # Plot
     ax1.plot(F[1], np.abs(F[0]))
@@ -91,7 +91,7 @@ def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
 
 
 def Four_Plot_Sep(F, title="Transformada de Fourier",
-                  y1='|H(w)|', y2='Phase'):
+                  y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     # First plot
     Four_Plot_Mag(F, title, y1)
@@ -101,7 +101,7 @@ def Four_Plot_Sep(F, title="Transformada de Fourier",
     # Titles and labels
     plt.title(title)
 
-    ax2.set_xlabel('w')
+    ax2.set_xlabel('ω')
     ax2.set_ylabel(y2)
     # Plot
     ax2.plot(F[1], np.angle(F[0]), 'r--')
@@ -111,7 +111,7 @@ def Four_Plot_Sep(F, title="Transformada de Fourier",
 
 
 def Four_Plot_Mag(F, title="Transformada de Fourier",
-                  y1='|H(w)|', y2=None):
+                  y1='|H(ω)|', y2=None):
     fig = plt.figure()
     # First plot
     ax1 = fig.add_subplot(1, 1, 1)
@@ -333,7 +333,7 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
 
 def Plot_Fourier(F, type="Mag_Only",
                  title="Transformada de Fourier",
-                 y1='|H(w)|', y2='Phase'):
+                 y1='|H(ω)|', y2='Phase'):
 
     Four_Plot_Funcs[type](F, title, y1, y2)
     return
@@ -502,19 +502,21 @@ def print_Hz(b, a):
     den = "       "
     i = 0
     for bi in b:
-        if i == 0:
-            num = num + str(round(bi, 3))
-        else:
-            num = num + " + " + str(round(bi, 3)) + "z^-" + str(i)
-        equ = equ + "------------"
+        if np.abs(bi) > 1e-6:
+            if i == 0:
+                num = num + str(round(bi, 3))
+            else:
+                num = num + " + " + str(round(bi, 3)) + "z^-" + str(i)
+            equ = equ + "------------"
         i = i+1
     i = 0
 
     for ai in a:
-        if i == 0:
-            den = den + str(round(ai, 3))
-        else:
-            den = den + " + " + str(round(ai, 3)) + "z^-" + str(i)
+        if np.abs(ai) > 1e-6:
+            if i == 0:
+                den = den + str(round(ai, 3))
+            else:
+                den = den + " + " + str(round(ai, 3)) + "z^-" + str(i)
         i = i+1
 
     print(num)
@@ -529,18 +531,20 @@ def print_diff_eq(b, a):
     den = "       "
     i = 0
     for bi in b:
-        if i == 0:
-            num = str(round(bi, 3)) + "*x[n]"
-        else:
-            num = num + " + " + str(round(bi, 3)) + "*x[n-" + str(i) + "]"
+        if np.abs(bi) > 1e-6:
+            if i == 0:
+                num = str(round(bi, 3)) + "*x[n]"
+            else:
+                num = num + " + " + str(round(bi, 3)) + "*x[n-" + str(i) + "]"
         i = i+1
 
     i = 0
     for ai in a:
-        if i == 0:
-            den = str(round(ai, 3)) + "*y[n]"
-        else:
-            den = den + " + " + str(round(ai, 3)) + "*y[n-" + str(i) + "]"
+        if np.abs(ai) > 1e-6:
+            if i == 0:
+                den = str(round(ai, 3)) + "*y[n]"
+            else:
+                den = den + " + " + str(round(ai, 3)) + "*y[n-" + str(i) + "]"
         i = i+1
 
     print(den, " = ", num)
@@ -595,7 +599,7 @@ def plot_FFT(y, type="Mag_Only", T=1, title=None, y1=None, y2=None):
 # CSLU / OHSU, Spring Term 2011.
 
 
-def zplane(b, a, filename=None):
+def zplane(b, a, title="plano z do filtro", filename=None):
     """Plot the complex z-plane given a transfer function.
     """
 
@@ -647,6 +651,8 @@ def zplane(b, a, filename=None):
     ticks = [-1, -.5, .5, 1]
     plt.xticks(ticks)
     plt.yticks(ticks)
+
+    plt.title(title)
 
     if filename is None:
         plt.show()
