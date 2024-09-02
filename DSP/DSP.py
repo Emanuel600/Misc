@@ -507,7 +507,6 @@ def print_Hz(b, a):
                 num = num + str(round(bi, 3))
             else:
                 num = num + " + " + str(round(bi, 3)) + "z^-" + str(i)
-            equ = equ + "------------"
         i = i+1
     i = 0
 
@@ -519,6 +518,8 @@ def print_Hz(b, a):
                 den = den + " + " + str(round(ai, 3)) + "z^-" + str(i)
         i = i+1
 
+    equ = equ + "-"*(max(len(num), len(den))-7)
+
     print(num)
     print(equ)
     print(den)
@@ -526,28 +527,29 @@ def print_Hz(b, a):
 
 
 def print_diff_eq(b, a):
-    num = "       "
-    equ = "H(z) = "
-    den = "       "
+    b_str = ""
+    a_str = ""
     i = 0
     for bi in b:
         if np.abs(bi) > 1e-6:
             if i == 0:
-                num = str(round(bi, 3)) + "*x[n]"
+                b_str = str(round(bi, 3)) + "*x[n]"
             else:
-                num = num + " + " + str(round(bi, 3)) + "*x[n-" + str(i) + "]"
+                b_str = b_str + " + " + \
+                    str(round(bi, 3)) + "*x[n-" + str(i) + "]"
         i = i+1
 
     i = 0
     for ai in a:
         if np.abs(ai) > 1e-6:
             if i == 0:
-                den = str(round(ai, 3)) + "*y[n]"
+                a_str = str(round(ai, 3)) + "*y[n]"
             else:
-                den = den + " + " + str(round(ai, 3)) + "*y[n-" + str(i) + "]"
+                a_str = a_str + " + " + \
+                    str(round(ai, 3)) + "*y[n-" + str(i) + "]"
         i = i+1
 
-    print(den, " = ", num)
+    print(a_str, " = ", b_str)
     return
 
 
@@ -576,6 +578,11 @@ def get_FFT(y, T=1, N=None):
 def plot_FFT(y, type="Mag_Only", T=1, title=None, y1=None, y2=None):
     F = get_FFT(y, T)
     Plot_Fourier(F, type, title, y1, y2)
+
+
+def plot_group_delay(b, a, fs=1, title="Delay de Grupo"):
+    w, gd = sp.signal.group_delay((b, a), fs=fs)
+    plot([gd, w], title=title, xl="$\omega$", yl="nº amostras")
 
 #
 # Copyright (c) 2011 Christopher Felton
@@ -661,6 +668,25 @@ def zplane(b, a, title="plano z do filtro", filename=None):
 
     return z, p, k
 
+def QCoeff(x,N):
+    #  [y,L,B] = QCoeff(x,N)
+    #  Coefficient Quantization using N=1+L+B bit Representation
+    #  with Rounding operation
+    #  y: quantized array (same dim as x)
+    #  L: number of integer bits
+    #  B: number of fractional bits
+    #  x: a scalar, vector, or matrix
+    #  N: total number of bits
+    xm = np.abs(x)
+    eps = np.spacing(1)
+    L = np.max(np.maximum(0,np.fix(np.log2(xm[:]+eps)+1)))   # Integer bits
+    if L > N:
+        print("errmsg = *** N deve ser pelo menos ", int(L))
+    B = N-L   # Fractional bits
+    y = xm/(2**L)
+    y = np.round(y*(2**N))   # Rounding to N bits
+    y = np.sign(x)*y*(2**(-B))   # L+B+1 bit representation
+    return y,L,B
 
 # Function Dictionary For Fourier Plotting
 Four_Plot_Funcs = {
