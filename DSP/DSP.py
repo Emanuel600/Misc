@@ -116,7 +116,7 @@ def Four_Plot_Mag(F, title="Transformada de Fourier",
     # First plot
     ax1 = fig.add_subplot(1, 1, 1)
     # Titles and labels
-    ax1.set_xlabel('w')
+    ax1.set_xlabel('ω')
     ax1.set_ylabel(y1)
     ax1.plot(F[1], np.abs(F[0]))
     ax1.legend("Magnitude")
