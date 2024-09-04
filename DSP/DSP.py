@@ -48,60 +48,68 @@ def equal_n(sig1, sig2):
     return [y1, y2], n
 
 
-def Four_Plot_Same(F, title="Transformada de Fourier",
+def Four_Plot_Same(F, dB=False, title="Transformada de Fourier",
                    y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    # Plot
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax.plot(F[1], np.abs(F[0]))
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Titles and labels
     ax.set_title(title)
-    ax.set_xlabel('ω')
+    ax.set_xlabel('f (Hz)')
     ax.set_ylabel(y1)
-    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     # we already handled the x-label with ax
     ax2.set_ylabel(y2)
     ax2.tick_params(axis='y')
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    # Plot
-    ax.plot(F[1], np.abs(F[0]))
-    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
     return
 
 
-def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
+def Four_Plot_Sep_Sub(F, dB=False, title="Transformada de Fourier",
                       y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax1 = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
+    # Plot
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax1.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax1.plot(F[1], np.abs(F[0]))
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Titles and labels
     plt.title(title)
-    ax1.set_xlabel('ω')
+    ax1.set_xlabel('f (Hz)')
     ax1.set_ylabel(y1)
-    ax2.set_xlabel('ω')
+    ax2.set_xlabel('f (Hz)')
     ax2.set_ylabel(y2)
-    # Plot
-    ax1.plot(F[1], np.abs(F[0]))
-    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax1.legend("Magnitude")
     ax2.legend("Phase")
     return
 
 
-def Four_Plot_Sep(F, title="Transformada de Fourier",
+def Four_Plot_Sep(F, dB=False, title="Transformada de Fourier",
                   y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     # First plot
-    Four_Plot_Mag(F, title, y1)
+    Four_Plot_Mag(F, dB, title, y1)
     # Second plot
     fig = plt.figure()
     ax2 = fig.add_subplot(1, 1, 1)
     # Titles and labels
     plt.title(title)
 
-    ax2.set_xlabel('ω')
+    ax2.set_xlabel('f (Hz)')
     ax2.set_ylabel(y2)
     # Plot
     ax2.plot(F[1], np.angle(F[0]), 'r--')
@@ -110,15 +118,19 @@ def Four_Plot_Sep(F, title="Transformada de Fourier",
     return
 
 
-def Four_Plot_Mag(F, title="Transformada de Fourier",
+def Four_Plot_Mag(F, dB=False, title="Transformada de Fourier",
                   y1='|H(ω)|', y2=None):
     fig = plt.figure()
     # First plot
     ax1 = fig.add_subplot(1, 1, 1)
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax1.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax1.plot(F[1], np.abs(F[0]))
     # Titles and labels
-    ax1.set_xlabel('ω')
+    ax1.set_xlabel('f (Hz)')
     ax1.set_ylabel(y1)
-    ax1.plot(F[1], np.abs(F[0]))
     ax1.legend("Magnitude")
     plt.title(title)
     return
@@ -331,11 +343,11 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
 # Plot de conveniência para transformada de Fourier
 
 
-def Plot_Fourier(F, type="Mag_Only",
+def Plot_Fourier(F, type="Mag_Only", dB=False,
                  title="Transformada de Fourier",
                  y1='|H(ω)|', y2='Phase'):
 
-    Four_Plot_Funcs[type](F, title, y1, y2)
+    Four_Plot_Funcs[type](F, dB, title, y1, y2)
     return
 
 
@@ -575,9 +587,9 @@ def get_FFT(y, T=1, N=None):
     return F
 
 
-def plot_FFT(y, type="Mag_Only", T=1, title=None, y1=None, y2=None):
+def plot_FFT(y, type="Mag_Only", T=1, dB=False, title=None, y1="H|ω|", y2="Phase"):
     F = get_FFT(y, T)
-    Plot_Fourier(F, type, title, y1, y2)
+    Plot_Fourier(F, type, dB, title, y1, y2)
 
 
 def plot_group_delay(b, a, fs=1, title="Delay de Grupo"):
@@ -668,7 +680,8 @@ def zplane(b, a, title="plano z do filtro", filename=None):
 
     return z, p, k
 
-def QCoeff(x,N):
+
+def QCoeff(x, N):
     #  [y,L,B] = QCoeff(x,N)
     #  Coefficient Quantization using N=1+L+B bit Representation
     #  with Rounding operation
@@ -679,14 +692,15 @@ def QCoeff(x,N):
     #  N: total number of bits
     xm = np.abs(x)
     eps = np.spacing(1)
-    L = np.max(np.maximum(0,np.fix(np.log2(xm[:]+eps)+1)))   # Integer bits
+    L = np.max(np.maximum(0, np.fix(np.log2(xm[:]+eps)+1)))   # Integer bits
     if L > N:
         print("errmsg = *** N deve ser pelo menos ", int(L))
     B = N-L   # Fractional bits
     y = xm/(2**L)
     y = np.round(y*(2**N))   # Rounding to N bits
     y = np.sign(x)*y*(2**(-B))   # L+B+1 bit representation
-    return y,L,B
+    return y, L, B
+
 
 # Function Dictionary For Fourier Plotting
 Four_Plot_Funcs = {
