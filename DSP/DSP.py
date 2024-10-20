@@ -4,6 +4,9 @@ Definitions of classes and functions for Digital Signal Processing
 Author: Emanuel S Araldi
 """
 
+from matplotlib import rcParams
+from matplotlib.figure import Figure
+from matplotlib import patches
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
@@ -45,79 +48,95 @@ def equal_n(sig1, sig2):
     return [y1, y2], n
 
 
-def Four_Plot_Same(F, title="Transformada de Fourier",
-                   y1='|H(w)|', y2='Phase'):
+def Four_Plot_Same(F, dB=False, title="Transformada de Fourier",
+                   y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
+    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+    # Plot
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax.plot(F[1], np.abs(F[0]))
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Titles and labels
     ax.set_title(title)
-    ax.set_xlabel('w')
+    ax.set_xlabel('f (Hz)')
     ax.set_ylabel(y1)
-    ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
     # we already handled the x-label with ax
     ax2.set_ylabel(y2)
     ax2.tick_params(axis='y')
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    # Plot
-    ax.plot(F[1], np.abs(F[0]))
-    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
-def Four_Plot_Sep_Sub(F, title="Transformada de Fourier",
-                      y1='|H(w)|', y2='Phase'):
+def Four_Plot_Sep_Sub(F, dB=False, title="Transformada de Fourier",
+                      y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     ax1 = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
+    # Plot
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax1.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax1.plot(F[1], np.abs(F[0]))
+    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Titles and labels
     plt.title(title)
-    ax1.set_xlabel('w')
+    ax1.set_xlabel('f (Hz)')
     ax1.set_ylabel(y1)
-    ax2.set_xlabel('w')
+    ax2.set_xlabel('f (Hz)')
     ax2.set_ylabel(y2)
-    # Plot
-    ax1.plot(F[1], np.abs(F[0]))
-    ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax1.legend("Magnitude")
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
-def Four_Plot_Sep(F, title="Transformada de Fourier",
-                  y1='|H(w)|', y2='Phase'):
+def Four_Plot_Sep(F, dB=False, title="Transformada de Fourier",
+                  y1='|H(ω)|', y2='Phase'):
     fig = plt.figure()
     # First plot
-    Four_Plot_Mag(F, title, y1)
+    Four_Plot_Mag(F, dB, title, y1)
     # Second plot
     fig = plt.figure()
     ax2 = fig.add_subplot(1, 1, 1)
     # Titles and labels
     plt.title(title)
 
-    ax2.set_xlabel('w')
+    ax2.set_xlabel('f (Hz)')
     ax2.set_ylabel(y2)
     # Plot
     ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
-def Four_Plot_Mag(F, title="Transformada de Fourier",
-                  y1='|H(w)|', y2=None):
+def Four_Plot_Mag(F, dB=False, title="Transformada de Fourier",
+                  y1='|H(ω)|', y2=None):
     fig = plt.figure()
     # First plot
     ax1 = fig.add_subplot(1, 1, 1)
+    if dB:
+        y1 = str(y1) + " - dB"
+        ax1.plot(F[1], 20*np.log10(np.abs(F[0])))
+    else:
+        ax1.plot(F[1], np.abs(F[0]))
     # Titles and labels
-    ax1.set_xlabel('w')
+    ax1.set_xlabel('f (Hz)')
     ax1.set_ylabel(y1)
-    ax1.plot(F[1], np.abs(F[0]))
     ax1.legend("Magnitude")
     plt.title(title)
+    plt.grid(True, 'both')
     return
 
 
@@ -328,11 +347,11 @@ def plot(signal, title="Signal", xl='n', yl='y[n]'):
 # Plot de conveniência para transformada de Fourier
 
 
-def Plot_Fourier(F, type="Mag_Only",
+def Plot_Fourier(F, type="Mag_Only", dB=False,
                  title="Transformada de Fourier",
-                 y1='|H(w)|', y2='Phase'):
+                 y1='|H(ω)|', y2='Phase'):
 
-    Four_Plot_Funcs[type](F, title, y1, y2)
+    Four_Plot_Funcs[type](F, dB, title, y1, y2)
     return
 
 
@@ -377,8 +396,32 @@ def sin(start, end, w=1):
     n = np.arange(start, end+1, 1)
     return np.sin(w*n), n
 
+def echo(sig, aten, T, fs=1):
+    sig_echo = aten * sig # Atenua sinal
+    sig_echo = np.append(np.zeros(T//fs), sig_echo) # Adiciona delay
+    sig_echo[0:len(sig)] = sig_echo[0:len(sig)] + sig
+    return sig_echo
+    
+
+def halfsp(x):
+    x_ret = np.zeros(len(x)//2)
+    for i in range(len(x)//2):
+        x_ret[i] = x[2*i]
+    return x_ret
+
+
+def doublesp(x):
+    x_ret = np.array([])
+    for i in np.arange(0, len(x)-1):
+        x_ret = np.append(x_ret, x[i])
+        x_ret = np.append(x_ret, (x[i] + x[i+1])/2)
+    x_ret = np.append(x_ret, x[i+1])
+    x_ret = np.append(np.array(x[0] - (x[1]-x[0])/2), x_ret)
+    return x_ret
 
 # fDSP do professor
+
+
 def impseq(n0, n1, n2):
 
     #      Generates x(n) = delta(n-n0); n1 <= n <= n2
@@ -490,7 +533,195 @@ def conv_m(x, nx, h, nh):
     y = np.convolve(x, h)
     return [y, ny]
 
-# Adicionais por mim
+# Adicionais
+
+
+def print_Hz(b, a):
+    num = "       "
+    equ = "H(z) = "
+    den = "       "
+    i = 0
+    for bi in b:
+        if np.abs(bi) > 1e-6:
+            if i == 0:
+                num = num + str(round(bi, 3))
+            else:
+                num = num + " + " + str(round(bi, 3)) + "z^-" + str(i)
+        i = i+1
+    i = 0
+
+    for ai in a:
+        if np.abs(ai) > 1e-6:
+            if i == 0:
+                den = den + str(round(ai, 3))
+            else:
+                den = den + " + " + str(round(ai, 3)) + "z^-" + str(i)
+        i = i+1
+
+    equ = equ + "-"*(max(len(num), len(den))-7)
+
+    print(num)
+    print(equ)
+    print(den)
+    return
+
+
+def print_diff_eq(b, a):
+    b_str = ""
+    a_str = ""
+    i = 0
+    for bi in b:
+        if np.abs(bi) > 1e-6:
+            if i == 0:
+                b_str = str(round(bi, 3)) + "*x[n]"
+            else:
+                b_str = b_str + " + " + \
+                    str(round(bi, 3)) + "*x[n-" + str(i) + "]"
+        i = i+1
+
+    i = 0
+    for ai in a:
+        if np.abs(ai) > 1e-6:
+            if i == 0:
+                a_str = str(round(ai, 3)) + "*y[n]"
+            else:
+                a_str = a_str + " + " + \
+                    str(round(ai, 3)) + "*y[n-" + str(i) + "]"
+        i = i+1
+
+    print(a_str, " = ", b_str)
+    return
+
+
+def print_Hz_diff_eq(b, a, Separate=False):
+    separator = ""
+    if Separate:
+        separator = "----" + "-----------"*(len(b)-1)
+        print(separator)
+    print_Hz(b, a)
+    print(separator)
+    print_diff_eq(b, a)
+    print(separator)
+    return
+
+
+def get_FFT(y, T=1, N=None):
+    if not N:
+        N = len(y)
+    N = len(y)
+    H = (2.0/N) * (sp.fft.fft(y)[0:N//2])
+    w = sp.fft.fftfreq(N, T)[:N//2]
+    F = [H, w]
+    return F
+
+
+def plot_FFT(y, type="Mag_Only", T=1, dB=False, title=None, y1="H|ω|", y2="Phase"):
+    F = get_FFT(y, T)
+    Plot_Fourier(F, type, dB, title, y1, y2)
+
+
+def plot_group_delay(b, a, fs=1, title="Delay de Grupo"):
+    w, gd = sp.signal.group_delay((b, a), fs=fs)
+    plot([gd, w], title=title, xl="$\omega$", yl="nº amostras")
+
+
+def read_wav(file):
+    return sp.io.wavfile.read(file)
+
+
+def write_wav(file, rate, data):
+    return sp.io.wavfile.write(file, rate, data)
+
+#
+# Copyright (c) 2011 Christopher Felton
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# The following is derived from the slides presented by
+# Alexander Kain for CS506/606 "Special Topics: Speech Signal Processing"
+# CSLU / OHSU, Spring Term 2011.
+
+
+def zplane(b, a, title="plano z do filtro", filename=None):
+    """Plot the complex z-plane given a transfer function.
+    """
+
+    # get a figure/plot
+    ax = plt.subplot(111)
+
+    # create the unit circle
+    uc = patches.Circle((0, 0), radius=1, fill=False,
+                        color='black', ls='dashed')
+    ax.add_patch(uc)
+
+    # Get the poles and zeros
+    p = np.roots(a)
+    z = np.roots(b)
+
+    # Plot the zeros and set marker properties
+    t1 = plt.plot(z.real, z.imag, 'go', ms=10)
+    plt.setp(t1, markersize=10.0, markeredgewidth=1.0,
+             markeredgecolor='k', markerfacecolor='g')
+
+    # Plot the poles and set marker properties
+    t2 = plt.plot(p.real, p.imag, 'rx', ms=10)
+    plt.setp(t2, markersize=12.0, markeredgewidth=3.0,
+             markeredgecolor='r', markerfacecolor='r')
+
+    ax.spines['left'].set_position('center')
+    ax.spines['bottom'].set_position('center')
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+
+    # set the ticks
+    r = 1.5
+    plt.axis('scaled')
+    plt.axis([-r, r, -r, r])
+    ticks = [-1, -.5, .5, 1]
+    plt.xticks(ticks)
+    plt.yticks(ticks)
+
+    plt.title(title)
+
+    if filename is None:
+        plt.show()
+    else:
+        plt.savefig(filename)
+
+    return z, p
+
+
+def QCoeff(x, N):
+    #  [y,L,B] = QCoeff(x,N)
+    #  Coefficient Quantization using N=1+L+B bit Representation
+    #  with Rounding operation
+    #  y: quantized array (same dim as x)
+    #  L: number of integer bits
+    #  B: number of fractional bits
+    #  x: a scalar, vector, or matrix
+    #  N: total number of bits
+    xm = np.abs(x)
+    eps = np.spacing(1)
+    L = np.max(np.maximum(0, np.fix(np.log2(xm[:]+eps)+1)))   # Integer bits
+    if L > N:
+        print("errmsg = *** N deve ser pelo menos ", int(L))
+    B = N-L   # Fractional bits
+    y = xm/(2**L)
+    y = np.round(y*(2**N))   # Rounding to N bits
+    y = np.sign(x)*y*(2**(-B))   # L+B+1 bit representation
+    return y, L, B
 
 
 # Function Dictionary For Fourier Plotting

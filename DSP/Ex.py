@@ -71,6 +71,15 @@ s.plot()
 s = DSP.Signal(-30, 30)
 s = s.sin(0.2)
 s += s.sin(2*np.pi/3)
+# s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+# s1.sin(2)
+# s += s1
+# %% Test 2
+s = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s.sin(1)
+s1 = DSP.Signal(-int(8*np.pi), int(8*np.pi))
+s1.sin(2)
+s += s1
 s.plot()
 S = s.fourier(half=True)
 DSP.Plot_Fourier(S, type="Separate")
