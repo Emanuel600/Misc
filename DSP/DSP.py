@@ -396,6 +396,12 @@ def sin(start, end, w=1):
     n = np.arange(start, end+1, 1)
     return np.sin(w*n), n
 
+def echo(sig, aten, T, fs=1):
+    sig_echo = aten * sig # Atenua sinal
+    sig_echo = np.append(np.zeros(T//fs), sig_echo) # Adiciona delay
+    sig_echo[0:len(sig)] = sig_echo[0:len(sig)] + sig
+    return sig_echo
+    
 
 def halfsp(x):
     x_ret = np.zeros(len(x)//2)
