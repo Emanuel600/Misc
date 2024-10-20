@@ -71,6 +71,7 @@ def Four_Plot_Same(F, dB=False, title="Transformada de Fourier",
     # Add legend
     ax.legend("Magnitude")
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
@@ -95,6 +96,7 @@ def Four_Plot_Sep_Sub(F, dB=False, title="Transformada de Fourier",
     # Add legend
     ax1.legend("Magnitude")
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
@@ -115,6 +117,7 @@ def Four_Plot_Sep(F, dB=False, title="Transformada de Fourier",
     ax2.plot(F[1], np.angle(F[0]), 'r--')
     # Add legend
     ax2.legend("Phase")
+    plt.grid(True, 'both')
     return
 
 
@@ -133,6 +136,7 @@ def Four_Plot_Mag(F, dB=False, title="Transformada de Fourier",
     ax1.set_ylabel(y1)
     ax1.legend("Magnitude")
     plt.title(title)
+    plt.grid(True, 'both')
     return
 
 
@@ -393,7 +397,25 @@ def sin(start, end, w=1):
     return np.sin(w*n), n
 
 
+def halfsp(x):
+    x_ret = np.zeros(len(x)//2)
+    for i in range(len(x)//2):
+        x_ret[i] = x[2*i]
+    return x_ret
+
+
+def doublesp(x):
+    x_ret = np.array([])
+    for i in np.arange(0, len(x)-1):
+        x_ret = np.append(x_ret, x[i])
+        x_ret = np.append(x_ret, (x[i] + x[i+1])/2)
+    x_ret = np.append(x_ret, x[i+1])
+    x_ret = np.append(np.array(x[0] - (x[1]-x[0])/2), x_ret)
+    return x_ret
+
 # fDSP do professor
+
+
 def impseq(n0, n1, n2):
 
     #      Generates x(n) = delta(n-n0); n1 <= n <= n2
@@ -596,6 +618,14 @@ def plot_group_delay(b, a, fs=1, title="Delay de Grupo"):
     w, gd = sp.signal.group_delay((b, a), fs=fs)
     plot([gd, w], title=title, xl="$\omega$", yl="nº amostras")
 
+
+def read_wav(file):
+    return sp.io.wavfile.read(file)
+
+
+def write_wav(file, rate, data):
+    return sp.io.wavfile.write(file, rate, data)
+
 #
 # Copyright (c) 2011 Christopher Felton
 #
@@ -630,23 +660,9 @@ def zplane(b, a, title="plano z do filtro", filename=None):
                         color='black', ls='dashed')
     ax.add_patch(uc)
 
-    # The coefficients are less than 1, normalize the coeficients
-    if np.max(b) > 1:
-        kn = np.max(b)
-        b = b/float(kn)
-    else:
-        kn = 1
-
-    if np.max(a) > 1:
-        kd = np.max(a)
-        a = a/float(kd)
-    else:
-        kd = 1
-
     # Get the poles and zeros
     p = np.roots(a)
     z = np.roots(b)
-    k = kn/float(kd)
 
     # Plot the zeros and set marker properties
     t1 = plt.plot(z.real, z.imag, 'go', ms=10)
@@ -678,7 +694,7 @@ def zplane(b, a, title="plano z do filtro", filename=None):
     else:
         plt.savefig(filename)
 
-    return z, p, k
+    return z, p
 
 
 def QCoeff(x, N):
