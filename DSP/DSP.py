@@ -396,12 +396,13 @@ def sin(start, end, w=1):
     n = np.arange(start, end+1, 1)
     return np.sin(w*n), n
 
+
 def echo(sig, aten, T, fs=1):
-    sig_echo = aten * sig # Atenua sinal
-    sig_echo = np.append(np.zeros(T//fs), sig_echo) # Adiciona delay
+    sig_echo = aten * sig  # Atenua sinal
+    sig_echo = np.append(np.zeros(T//fs), sig_echo)  # Adiciona delay
     sig_echo[0:len(sig)] = sig_echo[0:len(sig)] + sig
     return sig_echo
-    
+
 
 def halfsp(x):
     x_ret = np.zeros(len(x)//2)
@@ -411,13 +412,19 @@ def halfsp(x):
 
 
 def doublesp(x):
-    x_ret = np.array([])
-    for i in np.arange(0, len(x)-1):
-        x_ret = np.append(x_ret, x[i])
-        x_ret = np.append(x_ret, (x[i] + x[i+1])/2)
-    x_ret = np.append(x_ret, x[i+1])
-    x_ret = np.append(np.array(x[0] - (x[1]-x[0])/2), x_ret)
+    x_ret = np.zeros(2*len(x))
+    for i in np.arange(0, 2*len(x)):
+        if (i % 2):                     # True for odd numbers
+            x_ret[i] = x[i//2]        # 1+i//2 = ceil(i/2)
+            continue
+        else:                           # True for even numbers
+            x_ret[i] = (x[i//2]+x[i//2-1])/2
+            continue
     return x_ret
+
+
+def normalize(x, A=1.0):
+    return A*x.astype(float)/np.max(np.abs(x.astype(float)))
 
 # fDSP do professor
 
@@ -626,7 +633,7 @@ def plot_group_delay(b, a, fs=1, title="Delay de Grupo"):
 
 
 def read_wav(file):
-    return sp.io.wavfile.read(file)
+    return (sp.io.wavfile.read(file))
 
 
 def write_wav(file, rate, data):
