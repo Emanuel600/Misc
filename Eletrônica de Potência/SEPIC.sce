@@ -16,15 +16,18 @@ K   = Vo/Vin    // Razão de Tensões
 D   = K/(1+K)
 Iin = Vo*Io/Vin
 // Dimensionamento de Componentes
-R    = Vo/Io
+Rl   = Vo/Io
 L1   = Vin*D/(2*dIL*Iin*f)
 L2   = Vin*D/(2*dIL*Io*f)
 C1   = Io*D/(2*f*dVc*Vo)
 C2   = D/(2*f*dVc)
 /**/
-printf("==================\n") // Simulado para o indutor: {9.23μ, 1.77u}
-printf("L = %0.3g μH\n", L*1e6)
-printf("C = %0.3g μF\n", C*1e6)
+printf("==================\n")
+printf("L1 = %0.3g μH\n", L1*1e6)
+printf("C1 = %0.3g μF\n", C1*1e6)
+printf("==================\n")
+printf("L2 = %0.3g μH\n", L2*1e6)
+printf("C2 = %0.3g μF\n", C2*1e6)
 printf("==================\n")
 printf("Rl = %g Ω\n", Rl)
 printf("D  = %g\n", D*360)
