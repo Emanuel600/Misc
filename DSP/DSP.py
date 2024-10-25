@@ -334,13 +334,15 @@ class Signal:
 # Plot de Conveniência
 
 
-def plot(signal, title="Signal", xl='n', yl='y[n]'):
+def plot(signal, title="Signal", xl='n', yl='y[n]', grid=True):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     # Titles and labels
     ax.set_title(title)
     ax.set_xlabel(xl)
     ax.set_ylabel(yl)
+    # Grids
+    ax.grid(grid, 'both', 'both')
     # Plot
     plt.stem(signal[1], signal[0])
 
@@ -399,7 +401,7 @@ def sin(start, end, w=1):
 
 def echo(sig, aten, T, fs=1):
     sig_echo = aten * sig  # Atenua sinal
-    sig_echo = np.append(np.zeros(T//fs), sig_echo)  # Adiciona delay
+    sig_echo = np.append(np.zeros(int(T*fs)), sig_echo)  # Adiciona delay
     sig_echo[0:len(sig)] = sig_echo[0:len(sig)] + sig
     return sig_echo
 
