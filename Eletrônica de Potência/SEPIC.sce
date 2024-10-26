@@ -1,26 +1,28 @@
 // Template Conversor Buck-Boost
 /**/
 // Características do Sistema
-Vin = 12    // V
-Vo  = 5     // V
-Io  = 1     // A
-f   = 80e3  // Hz
-dIL = 80    // %
-dVc = 1     // %
+Vin  = 9     // V
+Vo   = 6     // V
+Io   = 2     // A
+f    = 100e3 // Hz
+dIL  = 10    // %
+dILi = 15.04 // %
+dVc  = 0.833 // %
 /**/
 // Reajustando variáveis
-dIL = dIL/100
-dVc = dVc/100
+dIL  = dIL/100
+dVc  = dVc/100
+dILi = dILi/100
 // Cálculo de Parâmetros Adicionais
 K   = Vo/Vin    // Razão de Tensões
 D   = K/(1+K)
 Iin = Vo*Io/Vin
 // Dimensionamento de Componentes
 Rl   = Vo/Io
-L1   = Vin*D/(2*dIL*Iin*f)
+L1   = Vin*D/(2*dILi*Iin*f)
 L2   = Vin*D/(2*dIL*Io*f)
 C1   = Io*D/(2*f*dVc*Vo)
-C2   = D/(2*f*dVc)
+C2   = D/(2*f*Rl*dVc)
 /**/
 printf("==================\n")
 printf("L1 = %0.3g μH\n", L1*1e6)
