@@ -624,7 +624,7 @@ def get_FFT(y, T=1, N=None):
     return F
 
 
-def plot_FFT(y, type="Mag_Only", T=1, dB=False, title=None, y1="H|ω|", y2="Phase"):
+def plot_FFT(y, type="Mag_Only", T=1.0, dB=False, title=None, y1="H|ω|", y2="Phase"):
     F = get_FFT(y, T)
     Plot_Fourier(F, type, dB, title, y1, y2)
 
