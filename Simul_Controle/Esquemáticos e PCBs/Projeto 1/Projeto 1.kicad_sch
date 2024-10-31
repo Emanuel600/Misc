@@ -781,7 +781,7 @@
     )
     (pin "1" (uuid 7b782564-e984-4074-8c35-5c621d22e856))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR01") (unit 1)
         )
@@ -807,7 +807,7 @@
     (pin "1" (uuid e6735a7f-5c3b-47f9-9f5a-49af0c99836f))
     (pin "2" (uuid 24a5013f-4464-4b5b-9a86-03a76ffb2565))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "J3") (unit 1)
         )
@@ -833,7 +833,7 @@
     (pin "1" (uuid 52552aa5-8cb7-4088-8209-1574f99320b6))
     (pin "2" (uuid 147878fa-9dfd-4931-a587-54c5d21ba726))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "R2") (unit 1)
         )
@@ -859,7 +859,7 @@
     (pin "1" (uuid 4347a45e-ca37-4fa6-b31a-96a6a962c762))
     (pin "2" (uuid 52f0de17-8f7b-4b8a-9c16-a046786302e2))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "C2") (unit 1)
         )
@@ -882,10 +882,10 @@
     (property "Datasheet" "~" (at 148.59 68.834 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 9592b8cd-a52f-42f7-a623-2f9cd81ab1a8))
-    (pin "2" (uuid a81d699a-a575-40a3-889e-7574563dcb4e))
+    (pin "1" (uuid f1ec660d-bebc-4f12-b708-7f0fd0409beb))
+    (pin "2" (uuid 8f0669f5-08a7-45ce-b756-e783d847e217))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "C4") (unit 1)
         )
@@ -908,9 +908,9 @@
     (property "Datasheet" "" (at 138.43 73.66 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid bf2ddaf3-ce34-4b2a-809c-cbbceca51c9c))
+    (pin "1" (uuid 90aad362-591b-4a38-9cc5-643fa906bd64))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR05") (unit 1)
         )
@@ -933,9 +933,9 @@
     (property "Datasheet" "" (at 148.59 73.914 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid f454e7af-003c-416b-944c-f741669eb972))
+    (pin "1" (uuid f3ce4fb6-b8a9-487b-8f23-9de68543f5be))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR06") (unit 1)
         )
@@ -958,10 +958,10 @@
     (property "Datasheet" "~" (at 138.43 68.834 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid bf8ebc67-e311-4946-98c1-a3377d16c6a6))
-    (pin "2" (uuid ea1686a4-4675-4107-b153-76adc6a94019))
+    (pin "1" (uuid 69177730-fb01-4074-8185-9be920fd97a7))
+    (pin "2" (uuid 84f45a4f-6339-43b3-89b7-c0e07c4f91db))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "C3") (unit 1)
         )
@@ -987,9 +987,41 @@
     (pin "1" (uuid 48d8701a-6ead-483d-af15-0c980e6fcc85))
     (pin "2" (uuid 0b337b23-e605-4563-9735-fdf3a06a7681))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "R1") (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol (lib_id "Amplifier_Operational:LF355") (at 86.36 115.57 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid 5aa5bad0-b92c-4b7a-b5a5-2fb25c8539ba)
+    (property "Reference" "U1" (at 95.25 111.3791 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "LF355" (at 95.25 113.9191 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_DIP:DIP-8_W7.62mm_LongPads" (at 87.63 114.3 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/lf357.pdf" (at 90.17 111.76 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid d0cfa17a-1a83-4659-b699-64e413551490))
+    (pin "2" (uuid bdcc5087-b19e-40fd-97ee-c5379f664f2e))
+    (pin "3" (uuid 7840babd-86b0-4cf2-b6a6-b43c80e3eb53))
+    (pin "4" (uuid d129a737-6584-4773-8264-247d3a92e7f5))
+    (pin "5" (uuid 3a3ad9f6-8259-43ae-baf0-6f88ee0b00ee))
+    (pin "6" (uuid 29a709a2-2f02-4bf1-a044-d644d9d40389))
+    (pin "7" (uuid 48070647-d330-48e1-b427-580c861de259))
+    (pin "8" (uuid d530c3d1-6d98-451e-bde7-b9b7a5efb9a2))
+    (instances
+      (project "Projeto 1"
+        (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
+          (reference "U1") (unit 1)
         )
       )
     )
@@ -1014,7 +1046,7 @@
     (pin "2" (uuid cf9f1283-6522-4852-80f6-53b704ae102f))
     (pin "3" (uuid 8a828d1a-99c5-4364-a40c-f6dc1362174d))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "J1") (unit 1)
         )
@@ -1040,7 +1072,7 @@
     (pin "1" (uuid 163cfb1e-321d-4b1f-9d13-a9f927a766f4))
     (pin "2" (uuid d477f0b6-56bb-47a0-87f7-2b81981c0f06))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "J2") (unit 1)
         )
@@ -1065,7 +1097,7 @@
     )
     (pin "1" (uuid e8deedfc-1d5a-4576-88fd-43bc239bf79f))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR03") (unit 1)
         )
@@ -1092,7 +1124,7 @@
     (pin "2" (uuid a0743d56-c4e7-400b-abe4-9e25b780572f))
     (pin "3" (uuid 05d81f1d-160e-4507-9f1d-49bf60795208))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "RV1") (unit 1)
         )
@@ -1117,41 +1149,9 @@
     )
     (pin "1" (uuid b6d5972a-5957-458e-a829-c91ecc25f5d5))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR04") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Amplifier_Operational:LF355") (at 86.36 115.57 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid c914d9e7-05f1-4e33-8bed-47cd239e5c4d)
-    (property "Reference" "U2" (at 95.885 111.3791 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "LF355" (at 95.885 113.9191 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Package_DIP:DIP-8_W7.62mm" (at 87.63 114.3 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "http://www.ti.com/lit/ds/symlink/lf357.pdf" (at 90.17 111.76 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid e2d42a82-a1f5-4ebd-ae1e-28ede6c8c49c))
-    (pin "2" (uuid c17f15e1-3601-4ef3-bc70-0ca4675c6794))
-    (pin "3" (uuid 2a927614-22a5-4763-8772-5fb167b6bc41))
-    (pin "4" (uuid e233db3e-3c58-45ea-9a8f-ae7302e0557b))
-    (pin "5" (uuid b9ae465e-8a7d-417f-9ed0-16f4d78c4756))
-    (pin "6" (uuid deaae11e-f611-47e4-903c-4c1df4dfc764))
-    (pin "7" (uuid 6b5da878-cb6a-4cb4-a9c9-e14f8bf448d4))
-    (pin "8" (uuid fd7279a2-b15f-47cf-acdb-fee3e4a3ec98))
-    (instances
-      (project "Controle_2"
-        (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
-          (reference "U2") (unit 1)
         )
       )
     )
@@ -1174,7 +1174,7 @@
     )
     (pin "1" (uuid 4dba5e03-1da7-4564-92f7-ac1457c442a2))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "#PWR02") (unit 1)
         )
@@ -1200,7 +1200,7 @@
     (pin "1" (uuid 630fce06-61a0-433f-8e43-e93271565b16))
     (pin "2" (uuid d9291488-45bc-46f7-a5b0-1ba7527b28fc))
     (instances
-      (project "Controle_2"
+      (project "Projeto 1"
         (path "/457f9108-7d13-42e6-a9e1-a9f2d9721264"
           (reference "C1") (unit 1)
         )
