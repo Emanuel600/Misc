@@ -84,11 +84,11 @@ def zplane(G, title="plano z do sistema", filename=None):
 
     return z, p
 
-def plot_step(Gz, t, title="Resposta ao Degrau", xl="t (ms)", yl="Out"):
+def plot_step(Gz, t, title="Resposta ao Degrau", xl="t (ms)", yl="Out", label=""):
     t, y = ct.step_response(Gz, T=t)
     tms  = 1e3*t
     f, ax = plt.subplots()
-    ax.stem(tms, y)
+    ax.stem(tms, y, label=label)
     ax.step(tms, y, where="post")
     ax.grid(True, 'both')
     ax.set_xlabel(xl)
