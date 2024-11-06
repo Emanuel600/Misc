@@ -2,12 +2,12 @@
 /**/
 // Características do Sistema
 Vin  = 9     // V
-Vo   = 6     // V
-Io   = 2     // A
-f    = 100e3 // Hz
-dIL  = 10    // %
-dILi = 15.04 // %
-dVc  = 0.833 // %
+Vo   = 2.7   // V
+Io   = 1     // A
+f    = 300e3 // Hz
+dIL  = 40    // %
+dILi = 40    // %
+dVc  = 2     // %
 /**/
 // Reajustando variáveis
 dIL  = dIL/100
@@ -19,10 +19,10 @@ D   = K/(1+K)
 Iin = Vo*Io/Vin
 // Dimensionamento de Componentes
 Rl   = Vo/Io
-L1   = Vin*D/(2*dILi*Iin*f)
-L2   = Vin*D/(2*dIL*Io*f)
-C1   = Io*D/(2*f*dVc*Vo)
-C2   = D/(2*f*Rl*dVc)
+L1   = Vin*D/(dILi*Iin*f)
+L2   = Vin*D/(dIL*Io*f)
+C1   = Io*D/(f*dVc*Vo)
+C2   = D/(f*Rl*dVc)
 // Correntes e Tensões Máximas
 Is   = (Iin + Io)*(1+dILi/2)
 Id   = (Iin + Io)*(1+dIL/2)
