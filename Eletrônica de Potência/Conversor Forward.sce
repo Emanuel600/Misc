@@ -10,12 +10,12 @@ modo de condução contínua para toda possibilidade de funcionamento
 "
 */
 // Definição de Características do Sistema
-Vin    = 300    // V
-Vo     = 12     // V
-Io     = 2      // A
-f      = 40e3   // Hz
-dIl    = 40     // %
-dVc    = 1      // %
+Vin    = 400    // V
+Vo     = 48     // V
+Io     = 10     // A
+f      = 20e3   // Hz
+dIl    = 60     // %
+dVc    = 0.5    // %
 D      = 40     // %
 // Reajuste de parâmetros
 dIl = dIl/100
