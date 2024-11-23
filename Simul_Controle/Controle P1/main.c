@@ -38,7 +38,7 @@ int main()
     double Y[nf];           // Saída da Planta
     double y = 0;           // Saída "Amostrada" pelo ADC
 
-    // Inicializando Saída
+    // Inicializando Vetores
     for(int i = 0; i < (sizeof(U) / sizeof(U[0])); i++) {
         U[i] = 0;
         Y[i] = 0;
