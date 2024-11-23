@@ -8,9 +8,9 @@
  *
  */
 
-// #include "recursivas.h" -> Arquivo incompleto, ignore
-
 #include <stdio.h>
+
+#include "recursivas.h"
 
 int main()
 {
@@ -26,52 +26,25 @@ int main()
     const double Cz_b[] = {1 * K, -1.43163444 * K, 0.69070022 * K};
 
     float  Ts    = 2.986e-3;// Taxa de Amostragem
-    double tf    = 100e-3;  // Tempo Final de Simulação
+    double tfin  = 100e-3;  // Tempo Final de Simulação
+    int    nf    = (int)(tfin / Ts);
     double Ref   = 1;       // Assumindo Referência Constante, Pode Ser Lida por ADC
-    // Inicializando Variáveis
-    int    nf    = (int)(tf / Ts);
-    double U[nf];           // Saída Completa
-    double Erro[nf];        // Erro Completo
-    double ea    = 0;       // Erro Acumulado
-    double ua    = 0;       // Saída Acumulada
-    double ya    = 0;       // Saída Acumulada
-    double Y[nf];           // Saída da Planta
-    double y = 0;           // Saída "Amostrada" pelo ADC
+    double Erro  = 0;
+    double U     = 0;
+    double Y     = 0;
 
-    // Inicializando Vetores
-    for(int i = 0; i < (sizeof(U) / sizeof(U[0])); i++) {
-        U[i] = 0;
-        Y[i] = 0;
-        Erro[i] = i > 3 ? Ref : 0;
-    }
-    int j = 0;
-    // Simula Até tf, Dentro do Microcontrolador Será Chamado Quando o Buffer Estourar
-    for(int n = (sizeof(Cz_a) / sizeof(Cz_a[0])); n < nf; n++) {
-        ua = 0;
-        ea = 0;
+    TransferFunction Cz = tf(Cz_b, Cz_a, Ts);
+    LTI_System C = lti_Init(&Cz, 3, 3);
 
-        Erro[n] = Ref - y;
-        for(j = 0; j < (sizeof(Cz_b) / sizeof(Cz_b[0])); j++) {
-            ea += Cz_b[j] * Erro[n - j];
-        }
-        for(j = 1; j < (sizeof(Cz_a) / sizeof(Cz_a[0])); j++) {
-            ua += Cz_a[j] * U[n - j];
-        }
-        U[n] = (ea - ua) / Cz_a[0];
-        // Lê Y pelo ADC
-        ya = 0;
-        ua = 0;
-
-        for(j = 0; j < (sizeof(Gz_b) / sizeof(Gz_b[0])); j++) {
-            ua += Gz_b[j] * U[n - j];
-        }
-        for(j = 1; j < (sizeof(Gz_a) / sizeof(Gz_a[0])); j++) {
-            ya += Gz_a[j] * Y[n - j];
-        }
-        Y[n] = (ua - ya) / Gz_a[0];
-        y    = Y[n]; // "Leitura" do ADC
-        // n ajustado por paridade com o script python
-        fprintf(fp, "%d,%g,%g,%g,%g,%g\n", (n - 2), (n - 2) * Ts, Ref, Erro[n], U[n], Y[n]);
+    TransferFunction Gz = tf(Gz_b, Gz_a, Ts);
+    LTI_System G = lti_Init(&Gz, 2, 3);
+    // Simulando Aplicação Real do Filtro
+    for(int n = C.y.size; n < nf; n++) {
+        Ref  = 1;                   // Lê ADC?
+        Erro = Ref - Y;
+        U    = lti_rtf(&C, Erro);
+        Y    = lti_rtf(&G, U);      // "Lê ADC"
+        fprintf(fp, "%d,%g,%g,%g,%g,%g\n", (n - 1), (n - 1) * Ts, Ref, Erro, U, Y);
     }
     fclose(fp);
 }
