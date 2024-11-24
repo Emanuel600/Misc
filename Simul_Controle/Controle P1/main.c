@@ -18,15 +18,15 @@ int main()
     fp = fopen("Simulacao em C.csv", "w+");
     fprintf(fp, "n,t,Ref,Erro,U,Y\n");
 
-    const double Gz_a[] = {1, -1.43163444, 0.69070022};
-    const double Gz_b[] = {0.13758882, 0.12147697};
+    const double Gz_a[] = {1, -1.60409979, 0.75784955};
+    const double Gz_b[] = {0.08044408, 0.07330569};
 
-    double K = 1.3232630361853022;
-    const double Cz_a[] = {1, -1.25153218, 0.25153218};
-    const double Cz_b[] = {1 * K, -1.43163444 * K, 0.69070022 * K};
+    double K = 2.5463858254330605;
+    const double Cz_a[] = {1, -1.21044121, 0.21044121};
+    const double Cz_b[] = {1 * K, -1.60409979 * K, 0.75784955 * K};
 
-    float  Ts    = 2.986e-3;// Taxa de Amostragem
-    double tfin  = 100e-3;  // Tempo Final de Simulação
+    float  Ts    = 64.54901170083505e-3;// Taxa de Amostragem
+    double tfin  = 30e-3;  // Tempo Final de Simulação
     int    nf    = (int)(tfin / Ts);
     double Ref   = 1;       // Assumindo Referência Constante, Pode Ser Lida por ADC
     double Erro  = 0;

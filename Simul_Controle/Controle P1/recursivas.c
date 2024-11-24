@@ -22,7 +22,7 @@ TransferFunction tf(const double* b, const double* a, double Ts)
 buffer buffer_init(int size)
 {
     buffer buff;
-    buff.size = size - 1;
+    buff.size = size;
     buff.data = (double*) malloc(buff.size * sizeof(double));
 
     for(int i = 0; i < size; i++) {
@@ -45,33 +45,44 @@ LTI_System lti_Init(TransferFunction* tf, int size_x, int size_y)
 
 void buffer_push(buffer* buffer, double data)
 {
-    for(int i = 0; i < buffer->size; i++) {
+    for(int i = 0; i < buffer->size - 1; i++) {
         buffer->data[i] = buffer->data[i + 1];
     }
-    buffer->data[buffer->size] = data;
+    buffer->data[buffer->size - 1] = data;
 }
 
 double lti_rtf(LTI_System* sys, double x)
 {
-    double ac_x = 0;
-    double ac_y = 0;
+    double ac_x     = 0;
+    double ac_y     = 0;
 
-    buffer* buff_x = &sys->x;
-    buffer* buff_y = &sys->y;
+    buffer* buff_x  = &sys->x;
+    buffer* buff_y  = &sys->y;
+
+    int    ny       = buff_y->size;
+    int    nx       = buff_x->size;
 
     double y = 0;
 
     buffer_push(buff_x, x);
 
-    for(int j = 0; j < buff_x->size + 1; j++) {
-        ac_x += sys->tf->b[j] * buff_x->data[buff_x->size - j];
+    for(int j = 1; j < nx + 1; j++) {
+        ac_x += sys->tf->b[j - 1] * buff_x->data[nx - j];
+        printf("b[%d] * %g + ", j - 1, buff_x->data[nx - j]);
     }
-    for(int j = 1; j < buff_y->size + 1; j++) {
-        ac_y += sys->tf->a[j] * buff_y->data[buff_y->size + 1 - j];
+    printf("-(");
+    for(int j = 2; j < ny + 1; j++) {
+        // buffer[+1] devido à falta de y[n]*a[0]
+        ac_y += sys->tf->a[j - 1] * buff_y->data[ny - j];
+        printf("a[%d] * %g + ", j - 1, buff_y->data[ny - j]);
+        // printf("a[%d] = %g\n", j, sys->tf->a[j]);
+        // printf("y[%d] = %g\n", buff_y->size + 1 - j, buff_y->data[buff_y->size - j]);
     }
 
     y = (ac_x - ac_y) / sys->tf->a[0];
+    printf(") = y[%d]*a[0] = %g\n", ny - 1, ac_x - ac_y);
     buffer_push(buff_y, y);
+    printf("y[n] = %g\n", y);
 
     return y;
 }
