@@ -73,8 +73,8 @@ double lti_rtf(LTI_System* sys, double x)
     printf("-(");
     for(int j = 2; j < ny + 1; j++) {
         // buffer[+1] devido à falta de y[n]*a[0]
-        ac_y += sys->tf->a[j - 1] * buff_y->data[ny - j];
-        printf("a[%d] * %g + ", j - 1, buff_y->data[ny - j]);
+        ac_y += sys->tf->a[j - 1] * buff_y->data[ny + 1 - j];
+        printf("a[%d] * %g + ", j - 1, buff_y->data[ny + 1 - j]);
         // printf("a[%d] = %g\n", j, sys->tf->a[j]);
         // printf("y[%d] = %g\n", buff_y->size + 1 - j, buff_y->data[buff_y->size - j]);
     }

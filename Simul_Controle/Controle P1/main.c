@@ -25,7 +25,7 @@ int main()
     const double Cz_a[] = {1, -1.21044121, 0.21044121};
     const double Cz_b[] = {1 * K, -1.60409979 * K, 0.75784955 * K};
 
-    float  Ts    = 64.54901170083505e-3;// Taxa de Amostragem
+    double Ts    = 0.0022371912417931124;// Taxa de Amostragem
     double tfin  = 30e-3;  // Tempo Final de Simulação
     int    nf    = (int)(tfin / Ts);
     double Ref   = 1;       // Assumindo Referência Constante, Pode Ser Lida por ADC
@@ -44,7 +44,7 @@ int main()
         Erro = Ref - Y;
         U    = lti_rtf(&C, Erro);
         Y    = lti_rtf(&G, U);      // "Lê ADC"
-        fprintf(fp, "%d,%g,%g,%g,%g,%g\n", (n - 1), (n - 1) * Ts, Ref, Erro, U, Y);
+        fprintf(fp, "%d,%g,%g,%g,%g,%g\n", (n - 2), (n - 2) * Ts, Ref, Erro, U, Y);
     }
     fclose(fp);
 }
