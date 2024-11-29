@@ -17,8 +17,7 @@ D   = K/(1+K)
 Iin = Vo*Io/Vin
 // Dimensionamento de Componentes
 R    = Vo/Io
-Lmin = R*(1-D)^2/(2*f)  // Indutor Mínimo para corrente contínua
-L    = Lmin*2/dIL       // Indutor para a variação de corrente desajada, assumindo linearidade
+L    = (R*(1-D)^2)/(f*dIL)
 C    = Io*D/(f*dVc*Vo)
 // Corrente e Tensão Máximas na Chave e no Diodo
 //! Iin/(DT) é a área da corrente na chave, resultando em um valor médio quando multiplicado por T !\\

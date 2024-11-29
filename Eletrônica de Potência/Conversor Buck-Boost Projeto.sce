@@ -11,15 +11,13 @@ dVc = 1      // %
 // Reajustando variáveis
 dIL = dIL/100
 dVc = dVc/100
-Vin = Vin-0.5 // Compensando Perda no Diodo
 // Cálculo de Parâmetros Adicionais
-D   = Vo/(Vin + Vo)
+D   = Vo/(Vin - 0.5 + Vo) // Compensando Diodo
 Iin = (Vo*Io/Vin)*(1 + 10e-2) // Compensando Perda de Potência
 // Dimensionamento de Componentes
 R    = Vo/Io
-// Il   = Vin*D/(R*(1-D)^2) != Iin
-// L    = (R*(1-D)^2)/(f*dIL*Il)
 L    = (R*(1-D)^2)/(f*dIL)
+// L    = D*(Vin+0.5)/(2*f*dIL*Io) // Compensando Diodo
 C    = Io*D/(f*dVc*Vo)
 // Corrente e Tensão Máximas na Chave e no Diodo
 //! Iin/(DT) é a área da corrente na chave, resultando em um valor médio quando multiplicado por T !\\
