@@ -24,7 +24,7 @@ def bin_img(img):
     return img_bin
 
 
-def find_lines(img, dil_n=99, ero_n=55):
+def find_lines(img, dil_n=99, ero_n=121):
     assert img is not None, "Imagem inexistente"
     # assert img is np.ndarray, "Formato de imagem desconhecido"
     assert len(np.shape(img)) == 2, "Imagem deve ter 2 dimensões"
@@ -57,8 +57,9 @@ def find_words(img, lines, n=15):
         if cv.contourArea(line) < 1200:
             continue
         # roi of each line
+        dy = 20
         x, y, w, h = cv.boundingRect(line)
-        roi_line = word_img[y:y+h, x:x+w]
+        roi_line = word_img[y:(y+dy)+h, x:x+w]
 
         # draw contours on each word
         (cnt, hierarchy) = cv.findContours(
