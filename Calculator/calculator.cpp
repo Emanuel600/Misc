@@ -1,8 +1,8 @@
 /**
  * @file calculator.cpp
  * @author Emanuel S Araldi
- * @brief
- * @version 0.1
+ * @brief Implementing calculator module in C++
+ * @version 1.1
  * @date 2025-03-29
  *
  * @copyright Copyright (c) 2025
@@ -15,14 +15,16 @@
 
 #include "calculator.hpp"
 
+#include "macros.hpp"
+
 using namespace std;
 
 double Calculator::evaluate(string Input)
 {
-    cout << "\n[evaluate]: function called for [" << Input << "]\n" << endl;
+    DEBUG("\n[evaluate]: function called for [" << Input << "]\n" << endl;)
     for(long long unsigned int i = 0; i < Input.length(); i++) {
         char ch = Input[i];
-        cout << "[evaluate]: for loop on char [" << ch << "]\n" << endl;
+        DEBUG("[evaluate]: for loop on char [" << ch << "]\n" << endl;)
         if(ch == ' ') {
             continue;
         } else if(ch == '(') { // Open Brackets
@@ -36,10 +38,10 @@ double Calculator::evaluate(string Input)
             }
             i--;
             this->number_stack.push_back(stod(temp));
-            cout << "[evaluate]: converted string [" << temp;
-            cout << "] to double [" << this->number_stack.back() << ']' << endl;
+            DEBUG("[evaluate]: converted string [" << temp;)
+            DEBUG("] to double [" << this->number_stack.back() << ']' << endl;)
         } else if(ch == ')') { // Solve Brackets
-            cout << "[evaluate]: brackets solver called\n" << endl;
+            DEBUG("[evaluate]: brackets solver called\n" << endl;)
             while(!(this->operator_stack.empty()) && this->operator_stack.back() != '(') {
                 this->calculate();
             }
@@ -50,10 +52,10 @@ double Calculator::evaluate(string Input)
             while(!this->operator_stack.empty() &&
                     this->operator_priority(this->operator_stack.back()) >= this->operator_priority(ch)) {
                 this->calculate();
-                cout << "[evaluate]: solver called for operator [" << this->operator_stack.back() << "]" << endl;
+                DEBUG("[evaluate]: solver called for operator [" << this->operator_stack.back() << "]" << endl;)
             }
             this->operator_stack.push_back(ch);
-            cout << "[evaluate]: operator [" << this->operator_stack.back() << "] pushed\n" << endl;
+            DEBUG("[evaluate]: operator [" << this->operator_stack.back() << "] pushed\n" << endl;)
         }
     }
     // Solve Remaining Operators
@@ -61,13 +63,13 @@ double Calculator::evaluate(string Input)
         this->calculate();
     }
     // Back of Number Stack contains result
-    cout << "[evaluate]: Result for [" << Input << "] = [" << this->number_stack.back() << "]\n\n" << endl;
+    DEBUG("[evaluate]: Result for [" << Input << "] = [" << this->number_stack.back() << "]\n\n" << endl;)
     return this->number_stack.back();
 }
 
 int Calculator::operator_priority(char ch)
 {
-    cout << "\n[operator priority]: called for [" << ch << "]\n" << endl;
+    DEBUG("\n[operator priority]: called for [" << ch << "]\n" << endl;)
     if(ch == '+' || ch == '-') {
         return 1;
     }
@@ -91,7 +93,7 @@ void Calculator::calculate()
     char op = this->operator_stack.back();
     this->operator_stack.pop_back();
 
-    cout << "\n[calculate]: called for [" << a << op << b << "]\n" << endl;
+    DEBUG("\n[calculate]: called for [" << a << op << b << "]\n" << endl;)
 
     switch(op) {
     case '+':
@@ -112,6 +114,6 @@ void Calculator::calculate()
     default:
         break;
     }
-    cout << "[calculate] returned [" << this->number_stack.back() << "]\n" << endl;
+    DEBUG("[calculate] returned [" << this->number_stack.back() << "]\n" << endl;)
     return;
 }

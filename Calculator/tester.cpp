@@ -12,12 +12,14 @@
 #include <iostream>
 #include "tester.hpp"
 
+#include "macros.hpp"
+
 void Tester::run()
 {
     test_obj calc = this->obj;
     int i = 0;
     for(auto &element : (*this).Input) {
-        cout << "Beggining Test #" << i + 1 << " for Input=[" << element << "]" << endl;
+        DEBUG("Beggining Test #" << i + 1 << " for Input=[" << element << "]" << endl;)
         (*this).Program_Output[i] = calc.evaluate(element);
         i++;
     }

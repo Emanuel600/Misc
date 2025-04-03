@@ -2,7 +2,7 @@
 TOOLCHAIN		= C:/VScode/toolchains
 CXX				= g++
 # Flags
-W_FLAGS			= -Wall -Wextra
+W_FLAGS			= -Wall -Wextra -D_DEBUG
 FLAGS			= $(W_FLAGS)
 CXX_FLAGS		= $(FLAGS)
 CXX_FLAGS		+= -std=gnu++17
@@ -35,8 +35,8 @@ $(BIN_DIR)/:
 $(DOC_DIR)/:
 	mkdir -p $(DOC_DIR)
 #====================#
-.PHONY: clean compile CleanCompile run CleanAll CleanBin debug
-.PHONY: ShowHelp CleanDocs MakeDocs
+.PHONY: clean compile CleanCompile run CleanAll CleanBin
+.PHONY: help CleanDocs dox
 
 # 'compile' tracks all relevant files
 compile: $(APP).exe
@@ -56,11 +56,11 @@ $(APP).exe: $(OBJECTS) | $(BIN_DIR)/
 	@echo "==| Compiling Executable |=="
 	$(CXX) $(OBJECTS) -o $(APP).exe
 
-dox_config:
-	doxygen -g dox_config
+Doxyfile:
+	doxygen -g Doxyfile
 
-MakeDocs: dox_config
-	doxygen dox_config
+dox: Doxyfile
+	doxygen Doxyfile
 
 clean:
 	rm -f $(BUILD_DIR)/*
@@ -80,13 +80,14 @@ test:
 
 .DEFAULT_GOAL		:= run
 
-ShowHelp:
+help:
 	@echo "Available rules:"
 	@echo ""
 	@echo "compile:"
 	@echo "	Compiles target, tracks all objects, sources and headers"
-	@echo "Compiles C, C++ and ASM as-is and links them into an ELF file"
-	@echo "Also generates a .hex and .bin on top of size info"
+	@echo ""
+	@echo "dox:"
+	@echo "	Makes project documentation with Doxygen"
 	@echo ""
 	@echo "clean:"
 	@echo "	Cleans everything on /build and /dep directories"
@@ -98,13 +99,7 @@ ShowHelp:
 	@echo "	Cleans /docs"
 	@echo ""
 	@echo "CleanAll:"
-	@echo "	Cleans /build, /dep, /bin and /docs"
-	@echo ""
-	@echo "decompile:"
-	@echo "	Decompiles the ELF file generated from the target"
-	@echo ""
-	@echo "DecompileHeaders:"
-	@echo "	Shows asm headers and debug info"
+	@echo "	Cleans /build, /bin and /docs"
 	@echo ""
 	@echo "ShowHelp (default goal):"
 	@echo "	Shows this info, all available goals and extras configured"
