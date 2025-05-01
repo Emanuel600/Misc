@@ -64,7 +64,9 @@ double Calculator::evaluate(string Input)
     }
     // Back of Number Stack contains result
     DEBUG("[evaluate]: Result for [" << Input << "] = [" << this->number_stack.back() << "]\n\n" << endl;)
-    return this->number_stack.back();
+    double res = this->number_stack.back();
+    this->number_stack.pop_back(); // Removes result from number stack (memory leak)
+    return res;
 }
 
 int Calculator::operator_priority(char ch)
